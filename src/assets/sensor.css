@@ -1,0 +1,183 @@
+/* ========================================= */
+/* --- Layout chung cho Sensor --- */
+/* ========================================= */
+.sensor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+.sensor-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ========================================= */
+/* --- Component CircularProgress --- */
+/* ========================================= */
+.circular-progress-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.circular-svg {
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+}
+.circular-progress-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.circular-unit {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+.circular-label {
+  margin-top: 1rem;
+  text-align: center;
+}
+.circular-label-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+.circular-percentage {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+/* ========================================= */
+/* --- Component TemperatureGauge --- */
+/* ========================================= */
+.temp-gauge-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.temp-gauge-wrapper {
+  position: relative;
+  width: 12rem;
+  height: 8rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 0.5rem;
+}
+.temp-gauge-svg {
+  position: absolute;
+  bottom: 0;
+}
+.temp-needle-head {
+  position: absolute;
+  top: -0.5rem;
+  left: 50%;
+  width: 1rem;
+  height: 1rem;
+  background: #1f2937;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+.temp-gauge-info {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+.temp-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+.temp-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-top: 0.25rem;
+}
+.temp-range {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* ========================================= */
+/* --- Component LightBar --- */
+/* ========================================= */
+.light-bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.light-bar-wrapper {
+  position: relative;
+  width: 6rem;
+  height: 11rem;
+  background: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.light-bar-glow {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background: linear-gradient(to top, transparent, rgba(255, 255, 255, 0.5));
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.light-bar-line-1 {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 25%;
+  height: 1px;
+  background: white;
+  opacity: 0.3;
+}
+.light-bar-line-2 {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: white;
+  opacity: 0.3;
+}
+.light-bar-line-3 {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 75%;
+  height: 1px;
+  background: white;
+  opacity: 0.3;
+}
+.light-bar-info {
+  text-align: center;
+  margin-top: 1rem;
+}
+.light-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #d97706;
+}
+.light-unit {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+.light-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-top: 0.25rem;
+}

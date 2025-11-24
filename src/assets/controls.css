@@ -1,0 +1,114 @@
+/* ========================================= */
+/* --- Device Controls --- */
+/* ========================================= */
+.controls-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.controls-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.controls-title-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+.control-button {
+  position: relative;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform: scale(1);
+  background: white; /* Inactive default */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Inactive default */
+}
+.control-button-active {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+.control-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.control-icon-wrapper {
+  padding: 1rem;
+  border-radius: 9999px;
+  background: #f3f4f6;
+  transition: all 0.3s;
+}
+.control-icon-wrapper-active {
+  padding: 1rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s;
+}
+.control-icon {
+  width: 2rem;
+  height: 2rem;
+  color: #4b5563;
+}
+.control-icon-active {
+  width: 2rem;
+  height: 2rem;
+  color: white;
+}
+.control-label {
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: #374151;
+}
+.control-label-active {
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: white;
+}
+.control-status {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+.control-status-active {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+  opacity: 0.8;
+}
+.control-indicator {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: #d1d5db;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.control-indicator-active {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: white;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.led-icon {
+  font-size: 2rem;
+}

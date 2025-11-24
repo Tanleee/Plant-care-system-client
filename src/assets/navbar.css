@@ -1,0 +1,98 @@
+/* ========================================= */
+/* --- Component Navbar --- */
+/* ========================================= */
+.navbar {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.nav-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.nav-icon {
+  font-size: 2rem;
+}
+.nav-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+.mobile-menu-button {
+  display: none;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.nav-links-mobile {
+  display: flex !important;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.98);
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+}
+.nav-link-active {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+}
+.nav-link-logout {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+}

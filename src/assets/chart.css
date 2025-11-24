@@ -1,0 +1,58 @@
+/* ========================================= */
+/* --- Chart View --- */
+/* ========================================= */
+.chart-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.chart-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.chart-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+.chart-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.chart-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1rem;
+}
+.mini-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 120px;
+  margin-bottom: 1rem;
+}
+.chart-bar {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+.chart-current-value {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  text-align: center;
+}

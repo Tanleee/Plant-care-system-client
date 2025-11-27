@@ -26,6 +26,7 @@ const InputField = ({
           onChange={onChange}
           name={name}
           className="form-input"
+          autoComplete={type === 'password' && 'off'}
         />
         {type === 'password' && (
           <button

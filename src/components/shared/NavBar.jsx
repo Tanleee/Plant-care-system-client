@@ -206,13 +206,13 @@ function AuthButtons({ isMobile }) {
       <div className="mobile-auth-buttons">
         <button
           className="auth-btn signin-btn"
-          onClick={() => navigate('/login')}
+          onClick={() => navigate('/auth')}
         >
           Đăng nhập
         </button>
         <button
           className="auth-btn signup-btn"
-          onClick={() => navigate('/signup')}
+          onClick={() => navigate('/auth')}
         >
           Đăng ký
         </button>
@@ -222,16 +222,10 @@ function AuthButtons({ isMobile }) {
 
   return (
     <div className="auth-buttons">
-      <button
-        className="auth-btn signin-btn"
-        onClick={() => navigate('/login')}
-      >
+      <button className="auth-btn signin-btn" onClick={() => navigate('/auth')}>
         Đăng nhập
       </button>
-      <button
-        className="auth-btn signup-btn"
-        onClick={() => navigate('/signup')}
-      >
+      <button className="auth-btn signup-btn" onClick={() => navigate('/auth')}>
         Đăng ký
       </button>
     </div>

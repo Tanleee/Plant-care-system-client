@@ -1,44 +1,46 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
 const InputField = ({
   icon: Icon,
   type,
   placeholder,
+  name,
   value,
   onChange,
   error,
-  name
+  showPassword,
+  onTogglePassword
 }) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const inputType = type === 'password' && showPassword ? 'text' : type;
+  const isPassword = type === 'password';
 
   return (
-    <div className="input-field-group">
-      <div className="input-relative-wrapper">
+    <div className="input-group">
+      <div className="input-wrapper">
         <div className="input-icon">
           <Icon size={20} />
         </div>
         <input
-          type={inputType}
+          type={isPassword && showPassword ? 'text' : type}
+          name={name}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          name={name}
-          className="form-input"
-          autoComplete={type === 'password' && 'off'}
+          className={`form-input ${error ? 'error' : ''} ${
+            isPassword ? 'has-password-toggle' : ''
+          }`}
         />
-        {type === 'password' && (
+        {isPassword && onTogglePassword && (
           <button
             type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="password-toggle-button"
+            onClick={onTogglePassword}
+            className="password-toggle"
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
         )}
       </div>
-      {error && <p className="input-error-text">{error}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };

@@ -2,56 +2,45 @@ import React, { useState } from 'react';
 import { Mail, Lock } from 'lucide-react';
 import InputField from './InputField';
 
-const LoginForm = ({ onSwitchToSignup }) => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+const LoginForm = ({
+  formData,
+  onInputChange,
+  onSubmit,
+  onSwitchToSignup,
+  showPassword,
+  onTogglePassword,
+  isSending,
+  onForgotPassword
+}) => {
   const [errors, setErrors] = useState({});
-  const [message, setMessage] = useState(null);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (errors[e.target.name]) {
-      setErrors({ ...errors, [e.target.name]: '' });
-      setMessage(null);
-    }
-  };
 
   const handleSubmit = () => {
     const newErrors = {};
-    setMessage(null);
 
     if (!formData.email) newErrors.email = 'Email là bắt buộc';
     if (!formData.password) newErrors.password = 'Mật khẩu là bắt buộc';
 
     if (Object.keys(newErrors).length === 0) {
-      console.log('Login Data:', formData);
-      setMessage({
-        type: 'success',
-        text: 'Đăng nhập thành công! (Dữ liệu đã được in ra console)'
-      });
       setErrors({});
+      onSubmit(formData.email, formData.password);
     } else {
       setErrors(newErrors);
-      setMessage({
-        type: 'error',
-        text: 'Vui lòng kiểm tra các trường bị lỗi.'
-      });
+    }
+  };
+
+  const handleChange = (e) => {
+    onInputChange(e);
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: '' });
     }
   };
 
   return (
     <div className="form-container">
-      <h2 className="form-title">Chào mừng trở lại!</h2>
-      <p className="form-subtitle">Đăng nhập để quản lý vườn cây của bạn</p>
-
-      {message && (
-        <div
-          className={`message-box ${
-            message.type === 'success' ? 'message-success' : 'message-error'
-          }`}
-        >
-          {message.text}
-        </div>
-      )}
+      <div className="form-header">
+        <h2 className="form-title">Chào mừng trở lại!</h2>
+        <p className="form-subtitle">Đăng nhập để quản lý vườn cây của bạn</p>
+      </div>
 
       <div>
         <InputField
@@ -72,30 +61,38 @@ const LoginForm = ({ onSwitchToSignup }) => {
           value={formData.password}
           onChange={handleChange}
           error={errors.password}
+          showPassword={showPassword}
+          onTogglePassword={onTogglePassword}
         />
 
-        <div className="flex-between">
-          <label className="remember-me-label">
-            <input type="checkbox" className="checkbox-input" />
-            Ghi nhớ đăng nhập
+        <div className="form-actions">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="rememberMe"
+              checked={formData.rememberMe}
+              onChange={onInputChange}
+              className="checkbox-input"
+            />
+            <span>Ghi nhớ đăng nhập</span>
           </label>
-          <button type="button" className="link-button">
+          <button type="button" onClick={onForgotPassword} className="link-btn">
             Quên mật khẩu?
           </button>
         </div>
 
-        <button onClick={handleSubmit} className="submit-btn">
-          Đăng nhập
+        <button
+          onClick={handleSubmit}
+          disabled={isSending}
+          className="submit-btn"
+        >
+          {isSending ? 'Đang đăng nhập...' : 'Đăng nhập'}
         </button>
       </div>
 
-      <div className="switch-link-wrapper">
-        <span className="switch-text">Chưa có tài khoản? </span>
-        <button
-          type="button"
-          onClick={onSwitchToSignup}
-          className="switch-button"
-        >
+      <div className="switch-auth-text">
+        <span>Chưa có tài khoản? </span>
+        <button type="button" onClick={onSwitchToSignup} className="link-btn">
           Đăng ký ngay
         </button>
       </div>

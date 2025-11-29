@@ -1,6 +1,6 @@
 export default async function dataLoader(loaderUrl) {
   try {
-    const res = await fetch(loaderUrl);
+    const res = await fetch(loaderUrl, { credentials: "include" });
     if (!res.ok) {
       throw new Error("Something wrong when fetching data!");
     }
@@ -8,7 +8,9 @@ export default async function dataLoader(loaderUrl) {
     const data = await res.json();
 
     return data.data.data;
+    /*eslint-disable*/
   } catch (err) {
-    console.log(err.message);
+    // console.log(err.message);
+    return null;
   }
 }

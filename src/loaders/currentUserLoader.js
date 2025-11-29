@@ -1,18 +1,5 @@
-export default async function currentUserLoader() {
-  try {
-    const res = await fetch('/api/v1/users/me', {
-      credentials: 'include'
-    });
+import dataLoader from "./dataLoader";
 
-    if (!res.ok) {
-      return null;
-    }
-
-    const data = await res.json();
-
-    return data.data.data;
-    /*eslint-disable*/
-  } catch (err) {
-    return null;
-  }
+export default function currentUserLoader() {
+  return dataLoader("/api/v1/users/me");
 }

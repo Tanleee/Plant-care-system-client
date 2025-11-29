@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -20,6 +20,7 @@ import {
   TrendingUp,
   Download,
 } from "lucide-react";
+import { useLoaderData } from "react-router";
 import "./../assets/chartsPageStyle.css";
 
 import NavBar from "../components/shared/NavBar";
@@ -47,34 +48,75 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const generateHourlyData = () => {
-  const data = [];
-  for (let i = 0; i < 24; i++) {
-    data.push({
-      time: `${i}:00`,
-      temperature: 25 + Math.random() * 10,
-      humidity: 60 + Math.random() * 20,
-      soilMoisture: 50 + Math.random() * 30,
-      light:
-        i >= 6 && i <= 18 ? 800 + Math.random() * 400 : Math.random() * 100,
-    });
-  }
-  return data;
+// Hàm format thời gian cho trục X
+const formatTime = (timestamp) => {
+  const date = new Date(timestamp);
+  return `${date.getHours()}:${date.getMinutes().toString().padStart(2, "0")}`;
 };
 
-const generateDailyData = () => {
-  const data = [];
-  const days = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-  days.forEach((day) => {
-    data.push({
-      day,
-      temperature: 28 + Math.random() * 5,
-      humidity: 65 + Math.random() * 15,
-      soilMoisture: 55 + Math.random() * 25,
-      light: 900 + Math.random() * 300,
-    });
-  });
-  return data;
+// Hàm format ngày cho trục X
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+  return `${days[date.getDay()]} ${date.getDate()}/${date.getMonth() + 1}`;
+};
+
+// Hàm xử lý dữ liệu sensor realtime cho biểu đồ theo giờ
+const processSensorData = (sensorData) => {
+  if (!sensorData || !Array.isArray(sensorData)) {
+    return [];
+  }
+
+  if (sensorData.length === 0) {
+    return [];
+  }
+
+  const processed = sensorData.map((item) => ({
+    time: formatTime(item.timestamp),
+    temperature: Number(item.temperature) || 0,
+    humidity: Number(item.humidity) || 0,
+    soilMoisture: Number(item.soilMoisture) || 0,
+    light: Number(item.light) || 0,
+    timestamp: item.timestamp,
+  }));
+
+  return processed;
+};
+
+// Hàm xử lý dữ liệu archive cho biểu đồ theo tuần/tháng
+const processArchiveData = (archiveData, timeRange) => {
+  if (!archiveData || !Array.isArray(archiveData)) {
+    return [];
+  }
+
+  if (archiveData.length === 0) {
+    return [];
+  }
+
+  let filteredData = [...archiveData];
+
+  // Lọc dữ liệu theo timeRange
+  if (timeRange === "week") {
+    // Lấy 7 ngày gần nhất
+    filteredData = filteredData.slice(-7);
+  } else if (timeRange === "month") {
+    // Lấy 30 ngày gần nhất
+    filteredData = filteredData.slice(-30);
+  }
+
+  const processed = filteredData.map((item) => ({
+    day: formatDate(item.date),
+    date: item.date,
+    temperature: Number(item.average?.temperature) || 0,
+    humidity: Number(item.average?.humidity) || 0,
+    soilMoisture: Number(item.average?.soilMoisture) || 0,
+    light: Number(item.average?.light) || 0,
+    // Thêm min/max để có thể sử dụng sau này
+    tempMin: Number(item.min?.temperature) || 0,
+    tempMax: Number(item.max?.temperature) || 0,
+  }));
+
+  return processed;
 };
 
 // --- 2. Sub-Components ---
@@ -123,18 +165,39 @@ const MetricsGrid = ({
   metrics,
   selectedMetric,
   setSelectedMetric,
-  hourlyData,
+  currentData,
 }) => {
   return (
     <div className="charts-metrics-grid">
       {metrics.map((metric) => {
         const Icon = metric.icon;
-        // Logic tính toán giữ nguyên từ code gốc
-        const latestValue = hourlyData[hourlyData.length - 1][metric.id];
-        const prevValue = hourlyData[hourlyData.length - 2][metric.id];
-        const change = (((latestValue - prevValue) / prevValue) * 100).toFixed(
-          1
-        );
+
+        if (!currentData || currentData.length < 2) {
+          return (
+            <div key={metric.id} className="charts-metric-card">
+              <div className="charts-metric-header">
+                <div
+                  className="charts-metric-icon"
+                  style={{ backgroundColor: `${metric.color}15` }}
+                >
+                  <Icon size={24} color={metric.color} />
+                </div>
+                <span className="charts-metric-change">--</span>
+              </div>
+              <h3 className="charts-metric-name">{metric.name}</h3>
+              <p className="charts-metric-value">
+                -- <span className="charts-metric-unit">{metric.unit}</span>
+              </p>
+            </div>
+          );
+        }
+
+        const latestValue = currentData[currentData.length - 1][metric.id];
+        const prevValue = currentData[currentData.length - 2][metric.id];
+        const change =
+          prevValue !== 0
+            ? (((latestValue - prevValue) / prevValue) * 100).toFixed(1)
+            : 0;
 
         return (
           <div
@@ -179,6 +242,24 @@ const MetricsGrid = ({
 };
 
 const TemperatureChart = ({ data, timeRange }) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="charts-card">
+        <h2 className="charts-card-title">Biểu Đồ Nhiệt Độ Theo Thời Gian</h2>
+        <div
+          style={{
+            height: 350,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <p style={{ color: "#6b7280" }}>Không có dữ liệu</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="charts-card">
       <h2 className="charts-card-title">Biểu Đồ Nhiệt Độ Theo Thời Gian</h2>
@@ -213,6 +294,39 @@ const TemperatureChart = ({ data, timeRange }) => {
 };
 
 const HumiditySoilCharts = ({ data, timeRange }) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="charts-two-column">
+        <div className="charts-card">
+          <h2 className="charts-card-title">Độ Ẩm Không Khí</h2>
+          <div
+            style={{
+              height: 300,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <p style={{ color: "#6b7280" }}>Không có dữ liệu</p>
+          </div>
+        </div>
+        <div className="charts-card">
+          <h2 className="charts-card-title">Độ Ẩm Đất</h2>
+          <div
+            style={{
+              height: 300,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <p style={{ color: "#6b7280" }}>Không có dữ liệu</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="charts-two-column">
       {/* Humidity Chart */}
@@ -269,6 +383,24 @@ const HumiditySoilCharts = ({ data, timeRange }) => {
 };
 
 const LightChart = ({ data, timeRange }) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="charts-card">
+        <h2 className="charts-card-title">Cường Độ Ánh Sáng</h2>
+        <div
+          style={{
+            height: 300,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <p style={{ color: "#6b7280" }}>Không có dữ liệu</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="charts-card">
       <h2 className="charts-card-title">Cường Độ Ánh Sáng</h2>
@@ -300,11 +432,21 @@ const ChartsPage = () => {
   const [timeRange, setTimeRange] = useState("day");
   const [selectedMetric, setSelectedMetric] = useState("all");
 
-  const hourlyData = generateHourlyData();
-  const weeklyData = generateDailyData();
+  // Lấy dữ liệu thực từ API
+  const chartsData = useLoaderData();
 
-  // Xác định data để truyền vào các chart component
-  const currentData = timeRange === "day" ? hourlyData : weeklyData;
+  // Xử lý dữ liệu dựa trên timeRange
+  const currentData = useMemo(() => {
+    if (timeRange === "day") {
+      // Sử dụng dữ liệu realtime cho "Hôm nay"
+      const sensorData = chartsData?.sensorData || [];
+      return processSensorData(sensorData);
+    } else {
+      // Sử dụng dữ liệu archive cho "Tuần này" và "Tháng này"
+      const archiveData = chartsData?.sensorDataArchieve || [];
+      return processArchiveData(archiveData, timeRange);
+    }
+  }, [chartsData, timeRange]);
 
   const metrics = [
     {
@@ -328,7 +470,13 @@ const ChartsPage = () => {
       color: "#10b981",
       unit: "%",
     },
-    { id: "light", name: "Ánh sáng", icon: Sun, color: "#f59e0b", unit: "Lux" },
+    {
+      id: "light",
+      name: "Ánh sáng",
+      icon: Sun,
+      color: "#f59e0b",
+      unit: "Lux",
+    },
   ];
 
   return (
@@ -341,7 +489,7 @@ const ChartsPage = () => {
           metrics={metrics}
           selectedMetric={selectedMetric}
           setSelectedMetric={setSelectedMetric}
-          hourlyData={hourlyData}
+          currentData={currentData}
         />
 
         <TemperatureChart data={currentData} timeRange={timeRange} />

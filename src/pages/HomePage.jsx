@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Droplets,
   Sun,
@@ -6,15 +6,16 @@ import {
   Activity,
   Wifi,
   WifiOff,
-  Leaf
-} from 'lucide-react';
+  Leaf,
+} from "lucide-react";
 
-import './../assets/homePageStyle.css';
-import CircularGauge from './../components/home/CircularGauge';
-import InfoCard from './../components/home/InfoCard';
-import LightBar from './../components/home/LightBar';
-import TemperatureGauge from './../components/home/TemperatureGauge';
-import NavBar from '../components/shared/NavBar';
+import "./../assets/homePageStyle.css";
+import CircularGauge from "./../components/home/CircularGauge";
+import InfoCard from "./../components/home/InfoCard";
+import LightBar from "./../components/home/LightBar";
+import TemperatureGauge from "./../components/home/TemperatureGauge";
+import NavBar from "../components/shared/NavBar";
+import Footer from "../components/shared/Footer";
 
 const HomePage = () => {
   const [sensorData, setSensorData] = useState({
@@ -23,7 +24,7 @@ const HomePage = () => {
     soilMoisture: 47,
     light: 1342,
     lastUpdate: new Date(),
-    isOnline: true
+    isOnline: true,
   });
 
   useEffect(() => {
@@ -34,7 +35,7 @@ const HomePage = () => {
         humidity: parseInt(60 + Math.random() * 20),
         soilMoisture: parseInt(40 + Math.random() * 25),
         light: parseInt(1000 + Math.random() * 1500),
-        lastUpdate: new Date()
+        lastUpdate: new Date(),
       }));
     }, 3000);
 
@@ -60,7 +61,7 @@ const HomePage = () => {
 
             <div
               className={`status-indicator ${
-                !sensorData.isOnline ? 'offline' : ''
+                !sensorData.isOnline ? "offline" : ""
               }`}
             >
               {sensorData.isOnline ? (
@@ -140,12 +141,13 @@ const HomePage = () => {
         {/* Footer */}
         <footer className="footer">
           <p>
-            Cập nhật lần cuối:{' '}
-            {sensorData.lastUpdate.toLocaleTimeString('vi-VN')} • ESP32
+            Cập nhật lần cuối:{" "}
+            {sensorData.lastUpdate.toLocaleTimeString("vi-VN")} • ESP32
             SmartPlant System v2.0
           </p>
         </footer>
       </div>
+      <Footer />
     </>
   );
 };

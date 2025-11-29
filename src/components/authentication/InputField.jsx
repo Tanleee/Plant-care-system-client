@@ -10,7 +10,8 @@ const InputField = ({
   onChange,
   error,
   showPassword,
-  onTogglePassword
+  onTogglePassword,
+  isSending
 }) => {
   const isPassword = type === 'password';
 
@@ -26,6 +27,8 @@ const InputField = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          autoComplete={isPassword ? 'off' : 'on'}
+          disabled={isSending}
           className={`form-input ${error ? 'error' : ''} ${
             isPassword ? 'has-password-toggle' : ''
           }`}

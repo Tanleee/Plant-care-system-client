@@ -1,6 +1,23 @@
-import React, { useState } from 'react';
-import { Mail, Lock, User } from 'lucide-react';
-import InputField from './InputField';
+import React, { useState } from "react";
+import { Mail, Lock, User } from "lucide-react";
+import InputField from "./InputField";
+import SocialAuth from "./SocialAuth";
+import validatePassword from "../../utils/validatePassword";
+import validateEmail from "../../utils/validateEmail";
+
+function FieldMessage({ isSuccess, successMessage, errorMessage }) {
+  return (
+    <div className="input-group" style={{ fontSize: "0.875rem" }}>
+      {isSuccess ? (
+        <span style={{ color: "var(--primary-color)" }}>
+          ✓ {successMessage}
+        </span>
+      ) : (
+        <span style={{ color: "var(--danger)" }}>✗ {errorMessage}</span>
+      )}
+    </div>
+  );
+}
 
 const SignupForm = ({
   formData,
@@ -11,28 +28,40 @@ const SignupForm = ({
   showConfirmPassword,
   onTogglePassword,
   onToggleConfirmPassword,
-  isSending
+  isSending,
+  isLogin,
+  onGoogleSuccess,
+  onGoogleError,
 }) => {
   const [errors, setErrors] = useState({});
 
-  const validatePassword = (password) => {
-    return password.length >= 8;
-  };
+  function isFormValid() {
+    return (
+      formData.fullName.trim() !== "" &&
+      formData.email.trim() !== "" &&
+      validateEmail(formData.email) &&
+      formData.password.trim() !== "" &&
+      formData.confirmPassword.trim() !== "" &&
+      validatePassword(formData.password) &&
+      formData.password === formData.confirmPassword &&
+      formData.agreeToTerms
+    );
+  }
 
   const handleSubmit = () => {
     const newErrors = {};
 
-    if (!formData.fullName) newErrors.fullName = 'Tên là bắt buộc';
-    if (!formData.email) newErrors.email = 'Email là bắt buộc';
-    if (!formData.password) newErrors.password = 'Mật khẩu là bắt buộc';
+    if (!formData.fullName) newErrors.fullName = "Tên là bắt buộc";
+    if (!formData.email) newErrors.email = "Email là bắt buộc";
+    if (!formData.password) newErrors.password = "Mật khẩu là bắt buộc";
     else if (!validatePassword(formData.password)) {
-      newErrors.password = 'Mật khẩu phải có ít nhất 8 ký tự';
+      newErrors.password = "Mật khẩu phải có ít nhất 8 ký tự";
     }
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Mật khẩu không khớp';
+      newErrors.confirmPassword = "Mật khẩu không khớp";
     }
     if (!formData.agreeToTerms) {
-      newErrors.agreeToTerms = 'Bạn phải đồng ý với điều khoản dịch vụ';
+      newErrors.agreeToTerms = "Bạn phải đồng ý với điều khoản dịch vụ";
     }
 
     if (Object.keys(newErrors).length === 0) {
@@ -51,7 +80,7 @@ const SignupForm = ({
   const handleChange = (e) => {
     onInputChange(e);
     if (errors[e.target.name]) {
-      setErrors({ ...errors, [e.target.name]: '' });
+      setErrors({ ...errors, [e.target.name]: "" });
     }
   };
 
@@ -73,6 +102,7 @@ const SignupForm = ({
           value={formData.fullName}
           onChange={handleChange}
           error={errors.fullName}
+          isSending={isSending}
         />
 
         <InputField
@@ -83,7 +113,16 @@ const SignupForm = ({
           value={formData.email}
           onChange={handleChange}
           error={errors.email}
+          isSending={isSending}
         />
+
+        {formData.email.trim() !== "" && (
+          <FieldMessage
+            isSuccess={validateEmail(formData.email)}
+            successMessage="Email hợp lệ"
+            errorMessage="Email không hợp lệ"
+          />
+        )}
 
         <InputField
           icon={Lock}
@@ -95,7 +134,17 @@ const SignupForm = ({
           error={errors.password}
           showPassword={showPassword}
           onTogglePassword={onTogglePassword}
+          isSending={isSending}
         />
+
+        {formData.password.trim() !== "" && (
+          <FieldMessage
+            isSuccess={validatePassword(formData.password)}
+            successMessage="Mật khẩu mạnh"
+            errorMessage="Mật khẩu phải bao gồm: 8+ ký tự, chữ hoa, chữ thường,
+                        số, và ký tự đặc biệt (!@#$...)"
+          />
+        )}
 
         <InputField
           icon={Lock}
@@ -107,26 +156,21 @@ const SignupForm = ({
           error={errors.confirmPassword}
           showPassword={showConfirmPassword}
           onTogglePassword={onToggleConfirmPassword}
+          isSending={isSending}
         />
 
-        {formData.confirmPassword && (
-          <div className="input-group" style={{ fontSize: '0.875rem' }}>
-            {formData.password === formData.confirmPassword ? (
-              <span style={{ color: 'var(--primary-color)' }}>
-                ✓ Mật khẩu khớp
-              </span>
-            ) : (
-              <span style={{ color: 'var(--danger)' }}>
-                ✗ Mật khẩu không khớp
-              </span>
-            )}
-          </div>
+        {formData.confirmPassword.trim() !== "" && (
+          <FieldMessage
+            isSuccess={formData.password === formData.confirmPassword}
+            successMessage="Mật khẩu khớp"
+            errorMessage="Mật khẩu không trùng khớp"
+          />
         )}
 
         <div className="terms-check">
           <label
             className="checkbox-label"
-            style={{ alignItems: 'flex-start' }}
+            style={{ alignItems: "flex-start" }}
           >
             <input
               type="checkbox"
@@ -134,21 +178,21 @@ const SignupForm = ({
               checked={formData.agreeToTerms}
               onChange={onInputChange}
               className="checkbox-input"
-              style={{ marginTop: '0.25rem' }}
+              style={{ marginTop: "0.25rem" }}
             />
-            <span style={{ marginLeft: '0.5rem' }}>
-              Tôi đồng ý với{' '}
+            <span style={{ marginLeft: "0.5rem" }}>
+              Tôi đồng ý với{" "}
               <button type="button" className="link-btn">
                 điều khoản dịch vụ
-              </button>{' '}
-              và{' '}
+              </button>{" "}
+              và{" "}
               <button type="button" className="link-btn">
                 chính sách bảo mật
               </button>
             </span>
           </label>
-          {errors.agreeToTerms && (
-            <p className="error-message" style={{ marginTop: '0.25rem' }}>
+          {errors.agreeToTerms && !formData.agreeToTerms && (
+            <p className="error-message" style={{ marginTop: "0.25rem" }}>
               {errors.agreeToTerms}
             </p>
           )}
@@ -156,12 +200,18 @@ const SignupForm = ({
 
         <button
           onClick={handleSubmit}
-          disabled={isSending}
+          disabled={isSending && isFormValid()}
           className="submit-btn"
         >
-          {isSending ? 'Đang đăng ký...' : 'Đăng ký'}
+          {isSending ? "Đang đăng ký..." : "Đăng ký"}
         </button>
       </div>
+
+      <SocialAuth
+        isLogin={isLogin}
+        onGoogleSuccess={onGoogleSuccess}
+        onGoogleError={onGoogleError}
+      />
 
       <div className="switch-auth-text">
         <span>Đã có tài khoản? </span>

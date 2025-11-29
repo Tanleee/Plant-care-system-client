@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { Leaf, ArrowLeft } from 'lucide-react';
-import axios from 'axios';
+import React, { useState } from "react";
 
-import './../assets/authPageStyle.css';
-import useAlert from './../hooks/useAlert';
-import ShowAlert from './../components/shared/ShowAlert';
+import { useNavigate } from "react-router";
+import { Leaf, ArrowLeft } from "lucide-react";
+import axios from "axios";
 
-import LoginForm from './../components/authentication/LoginForm';
-import SignupForm from './../components/authentication/SignupForm';
-import ForgotPasswordModal from '../components/authentication/ForgotPasswordModal';
+import "./../assets/authPageStyle.css";
+import useAlert from "./../hooks/useAlert";
+import ShowAlert from "./../components/shared/ShowAlert";
+
+import LoginForm from "./../components/authentication/LoginForm";
+import SignupForm from "./../components/authentication/SignupForm";
+
+import ForgotPasswordModal from "../components/authentication/ForgotPasswordModal";
 
 // Main AuthPage Component
 const AuthPage = () => {
@@ -19,12 +21,12 @@ const AuthPage = () => {
   const [isSending, setIsSending] = useState(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
     rememberMe: false,
-    agreeToTerms: false
+    agreeToTerms: false,
   });
   const navigate = useNavigate();
   const { alert, showSuccess, showError, hideAlert } = useAlert();
@@ -33,7 +35,7 @@ const AuthPage = () => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -41,19 +43,19 @@ const AuthPage = () => {
     setIsSending(true);
     try {
       const result = await axios({
-        method: 'post',
-        url: '/api/v1/users/login',
+        method: "post",
+        url: "/api/v1/users/login",
         data: {
           email,
-          password
+          password,
         },
-        withCredentials: true
+        withCredentials: true,
       });
 
-      if (result.data.status === 'success') {
-        showSuccess('Đăng nhập thành công', 2000);
+      if (result.data.status === "success") {
+        showSuccess("Đăng nhập thành công", 2000);
         setTimeout(() => {
-          document.location.href = '/';
+          document.location.href = "/";
         }, 2000);
       }
     } catch (err) {
@@ -71,21 +73,21 @@ const AuthPage = () => {
     setIsSending(true);
     try {
       const result = await axios({
-        method: 'post',
-        url: 'api/v1/users/signup',
+        method: "post",
+        url: "api/v1/users/signup",
         data: {
           name,
           email,
           password,
-          passwordConfirm
+          passwordConfirm,
         },
-        withCredentials: true
+        withCredentials: true,
       });
 
-      if (result.data.status === 'success') {
-        showSuccess('Đăng ký thành công', 2000);
+      if (result.data.status === "success") {
+        showSuccess("Đăng ký thành công", 2000);
         setTimeout(() => {
-          document.location.href = '/';
+          document.location.href = "/";
         }, 2000);
       }
     } catch (err) {
@@ -96,15 +98,50 @@ const AuthPage = () => {
     }
   }
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const result = await axios({
+        method: "post",
+        url: "/api/v1/users/google-auth",
+        data: {
+          credential: credentialResponse.credential,
+          isSignUp: !isLogin,
+        },
+        withCredentials: true,
+      });
+
+      if (result.data.status === "success") {
+        showSuccess(
+          !isLogin ? "Đăng ký thành công" : "Đăng nhập thành công",
+          2000
+        );
+        setTimeout(() => {
+          document.location.href = "/";
+        }, 2000);
+      }
+    } catch (err) {
+      if (err.status === 403) {
+        setFormData({ ...formData, email: err.response.data.message });
+        setIsRecoverModalOpen(true);
+      } else {
+        showError(err.response.data.message, 2000);
+      }
+    }
+  };
+
+  const handleGoogleError = () => {
+    showError("Đăng nhập Google thất bại", 2000);
+  };
+
   const toggleAuthMode = () => {
     setIsLogin(!isLogin);
     setFormData({
-      fullName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
       rememberMe: false,
-      agreeToTerms: false
+      agreeToTerms: false,
     });
     setShowPassword(false);
     setShowConfirmPassword(false);
@@ -130,7 +167,7 @@ const AuthPage = () => {
         <div className="auth-card">
           {/* Info Section */}
           <div className="info-section">
-            <button onClick={() => navigate(-1)} className="back-btn">
+            <button onClick={() => navigate("/")} className="back-btn">
               <ArrowLeft size={20} />
               <span>Quay lại</span>
             </button>
@@ -230,6 +267,9 @@ const AuthPage = () => {
                 onTogglePassword={() => setShowPassword(!showPassword)}
                 isSending={isSending}
                 onForgotPassword={() => setIsForgotPasswordOpen(true)}
+                onGoogleError={handleGoogleError}
+                onGoogleSuccess={handleGoogleSuccess}
+                isLogin={isLogin}
               />
             ) : (
               <SignupForm
@@ -244,6 +284,9 @@ const AuthPage = () => {
                   setShowConfirmPassword(!showConfirmPassword)
                 }
                 isSending={isSending}
+                onGoogleError={handleGoogleError}
+                onGoogleSuccess={handleGoogleSuccess}
+                isLogin={isLogin}
               />
             )}
           </div>

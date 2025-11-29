@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Activity,
   TrendingUp,
@@ -7,12 +7,11 @@ import {
   LogOut,
   Menu,
   X,
-  Leaf
-} from 'lucide-react';
-import { useNavigate } from 'react-router';
-import './../../assets/navBar.css';
+  Leaf,
+} from "lucide-react";
+import { useNavigate, useRouteLoaderData } from "react-router";
+import "./../../assets/navBar.css";
 
-// Helper function để lấy URL ảnh
 function getPhotoUrl(fileName) {
   return `/img/users/${fileName}`;
 }
@@ -22,7 +21,7 @@ function Brand() {
   const navigate = useNavigate();
 
   return (
-    <div className="navbar-brand" onClick={() => navigate('/')}>
+    <div className="navbar-brand" onClick={() => navigate("/")}>
       <div className="navbar-logo">
         <Leaf size={32} />
       </div>
@@ -33,22 +32,25 @@ function Brand() {
 
 // Navigation Menu Component
 function NavMenu({ currentPage, onPageChange, isMobile, onMobileClose }) {
+  const navigate = useNavigate();
+
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Activity },
-    { id: 'charts', label: 'Biểu đồ', icon: TrendingUp },
-    { id: 'control', label: 'Điều khiển', icon: Settings },
-    { id: 'history', label: 'Lịch sử', icon: History }
+    { id: "dashboard", label: "Dashboard", link: "/", icon: Activity },
+    { id: "charts", label: "Biểu đồ", link: "charts", icon: TrendingUp },
+    { id: "control", label: "Điều khiển", link: "controls", icon: Settings },
+    { id: "history", label: "Lịch sử", link: "history", icon: History },
   ];
 
   return (
-    <nav className={`navbar-menu ${isMobile ? 'mobile' : ''}`}>
+    <nav className={`navbar-menu ${isMobile ? "mobile" : ""}`}>
       {menuItems.map((item) => {
         const Icon = item.icon;
         return (
           <button
             key={item.id}
-            className={`nav-item ${currentPage === item.id ? 'active' : ''}`}
+            className={`nav-item ${currentPage === item.id ? "active" : ""}`}
             onClick={() => {
+              navigate(item.link);
               onPageChange(item.id);
               if (onMobileClose) onMobileClose();
             }}
@@ -63,24 +65,20 @@ function NavMenu({ currentPage, onPageChange, isMobile, onMobileClose }) {
 }
 
 // User Section Component (khi đã đăng nhập)
-function UserSection({ user, onLogout, isMobile }) {
+function UserSection({ user, isMobile }) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       // Gọi API logout nếu cần
-      // const res = await fetch('/api/v1/users/logout');
-      // if (!res.ok) throw new Error('Logout failed');
-
-      if (onLogout) {
-        onLogout();
-      }
+      const res = await fetch("/api/v1/users/logout");
+      if (!res.ok) throw new Error("Logout failed");
 
       // Redirect về trang login
-      navigate('/login');
+      window.location.href = "/auth";
     } catch (err) {
-      console.error('Logout error:', err.message);
+      console.error("Logout error:", err.message);
     }
   };
 
@@ -95,33 +93,30 @@ function UserSection({ user, onLogout, isMobile }) {
                 alt={user.name}
               />
             ) : (
-              <span>{user.name ? user.name.charAt(0).toUpperCase() : 'U'}</span>
+              <span>{user.name ? user.name.charAt(0).toUpperCase() : "U"}</span>
             )}
           </div>
           <div className="user-details">
-            <span className="user-name">{user.name || 'User'}</span>
+            <span className="user-name">{user.name || "User"}</span>
             <span className="user-email">{user.email}</span>
           </div>
         </div>
 
         <div className="mobile-user-actions">
-          <button
-            className="user-menu-item"
-            onClick={() => navigate('/profile')}
-          >
+          <button className="user-menu-item" onClick={() => navigate("/user")}>
             <span>👤</span>
             <span>Hồ sơ</span>
           </button>
           <button
             className="user-menu-item"
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate("/settings")}
           >
             <span>⚙️</span>
             <span>Cài đặt</span>
           </button>
           <button
             className="user-menu-item"
-            onClick={() => navigate('/notifications')}
+            onClick={() => navigate("/notifications")}
           >
             <span>🔔</span>
             <span>Thông báo</span>
@@ -149,12 +144,12 @@ function UserSection({ user, onLogout, isMobile }) {
               alt={user.name}
             />
           ) : (
-            <span>{user.name ? user.name.charAt(0).toUpperCase() : 'U'}</span>
+            <span>{user.name ? user.name.charAt(0).toUpperCase() : "U"}</span>
           )}
         </div>
-        <span className="user-name">{user.name || 'User'}</span>
+        <span className="user-name">{user.name || "User"}</span>
         <svg
-          className={`chevron ${showUserMenu ? 'open' : ''}`}
+          className={`chevron ${showUserMenu ? "open" : ""}`}
           width="16"
           height="16"
           viewBox="0 0 16 16"
@@ -171,17 +166,17 @@ function UserSection({ user, onLogout, isMobile }) {
 
       {showUserMenu && (
         <div className="user-menu">
-          <div className="user-menu-item" onClick={() => navigate('/profile')}>
+          <div className="user-menu-item" onClick={() => navigate("/user")}>
             <span>👤</span>
             <span>Hồ sơ</span>
           </div>
-          <div className="user-menu-item" onClick={() => navigate('/settings')}>
+          <div className="user-menu-item" onClick={() => navigate("/settings")}>
             <span>⚙️</span>
             <span>Cài đặt</span>
           </div>
           <div
             className="user-menu-item"
-            onClick={() => navigate('/notifications')}
+            onClick={() => navigate("/notifications")}
           >
             <span>🔔</span>
             <span>Thông báo</span>
@@ -206,13 +201,13 @@ function AuthButtons({ isMobile }) {
       <div className="mobile-auth-buttons">
         <button
           className="auth-btn signin-btn"
-          onClick={() => navigate('/auth')}
+          onClick={() => navigate("/auth")}
         >
           Đăng nhập
         </button>
         <button
           className="auth-btn signup-btn"
-          onClick={() => navigate('/auth')}
+          onClick={() => navigate("/auth")}
         >
           Đăng ký
         </button>
@@ -222,10 +217,10 @@ function AuthButtons({ isMobile }) {
 
   return (
     <div className="auth-buttons">
-      <button className="auth-btn signin-btn" onClick={() => navigate('/auth')}>
+      <button className="auth-btn signin-btn" onClick={() => navigate("/auth")}>
         Đăng nhập
       </button>
-      <button className="auth-btn signup-btn" onClick={() => navigate('/auth')}>
+      <button className="auth-btn signup-btn" onClick={() => navigate("/auth")}>
         Đăng ký
       </button>
     </div>
@@ -234,11 +229,12 @@ function AuthButtons({ isMobile }) {
 
 // Main NavBar Component
 const NavBar = ({
-  currentPage = 'dashboard',
+  currentPage = "dashboard",
   onPageChange = () => {},
-  user = null, // Truyền vào thông tin user từ parent component hoặc context
-  onLogout = null
+  onLogout = null,
 }) => {
+  const user = useRouteLoaderData("root");
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {

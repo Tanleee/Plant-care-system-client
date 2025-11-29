@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Mail, Lock } from 'lucide-react';
-import InputField from './InputField';
+import React, { useState } from "react";
+import { Mail, Lock } from "lucide-react";
+import InputField from "./InputField";
+import SocialAuth from "./SocialAuth";
 
 const LoginForm = ({
   formData,
@@ -10,15 +11,18 @@ const LoginForm = ({
   showPassword,
   onTogglePassword,
   isSending,
-  onForgotPassword
+  isLogin,
+  onForgotPassword,
+  onGoogleSuccess,
+  onGoogleError,
 }) => {
   const [errors, setErrors] = useState({});
 
   const handleSubmit = () => {
     const newErrors = {};
 
-    if (!formData.email) newErrors.email = 'Email là bắt buộc';
-    if (!formData.password) newErrors.password = 'Mật khẩu là bắt buộc';
+    if (!formData.email) newErrors.email = "Email là bắt buộc";
+    if (!formData.password) newErrors.password = "Mật khẩu là bắt buộc";
 
     if (Object.keys(newErrors).length === 0) {
       setErrors({});
@@ -31,7 +35,7 @@ const LoginForm = ({
   const handleChange = (e) => {
     onInputChange(e);
     if (errors[e.target.name]) {
-      setErrors({ ...errors, [e.target.name]: '' });
+      setErrors({ ...errors, [e.target.name]: "" });
     }
   };
 
@@ -86,9 +90,15 @@ const LoginForm = ({
           disabled={isSending}
           className="submit-btn"
         >
-          {isSending ? 'Đang đăng nhập...' : 'Đăng nhập'}
+          {isSending ? "Đang đăng nhập..." : "Đăng nhập"}
         </button>
       </div>
+
+      <SocialAuth
+        isLogin={isLogin}
+        onGoogleSuccess={onGoogleSuccess}
+        onGoogleError={onGoogleError}
+      />
 
       <div className="switch-auth-text">
         <span>Chưa có tài khoản? </span>

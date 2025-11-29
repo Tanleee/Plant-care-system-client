@@ -1,0 +1,493 @@
+.control-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #f0fdf4, #dbeafe);
+  padding: 24px;
+}
+
+.control-header {
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.control-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.control-title-icon {
+  display: inline;
+  margin-right: 12px;
+  vertical-align: middle;
+  color: #10b981;
+}
+
+.control-subtitle {
+  color: #6b7280;
+  margin: 0;
+}
+
+.control-card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.control-section-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 16px;
+}
+
+.control-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.control-mode-btn {
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: left;
+}
+
+.control-mode-btn:hover {
+  border-color: #10b981;
+  background-color: #f0fdf4;
+}
+
+.control-mode-btn-active {
+  border-color: #10b981;
+  background-color: #ecfdf5;
+}
+
+.control-mode-btn-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.control-mode-btn-label {
+  font-weight: bold;
+}
+
+.control-mode-btn-desc {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.control-devices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.control-device-card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
+  cursor: pointer;
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.control-device-card:hover {
+  transform: translateY(-2px);
+}
+
+.control-device-card-disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.control-device-card-on {
+  /* Additional styles when device is on */
+}
+
+.control-device-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.control-device-content {
+  position: relative;
+  z-index: 1;
+}
+
+.control-device-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.control-device-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  transition: transform 0.3s;
+}
+
+.control-device-card:hover .control-device-icon {
+  transform: scale(1.05);
+}
+
+.control-device-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.control-device-status {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.control-device-mode-badge {
+  margin-top: 12px;
+  padding: 6px 12px;
+  background-color: #fef3c7;
+  color: #92400e;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.control-auto-settings {
+  display: grid;
+  gap: 20px;
+}
+
+.control-auto-setting-item {
+  padding: 16px;
+  background-color: #f9fafb;
+  border-radius: 12px;
+}
+
+.control-auto-setting-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.control-auto-setting-inputs {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.control-auto-input-group {
+  flex: 1;
+}
+
+.control-auto-input-label {
+  font-size: 14px;
+  color: #6b7280;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.control-auto-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.control-save-btn {
+  margin-top: 16px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  background-color: #10b981;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+
+.control-save-btn:hover {
+  background-color: #059669;
+}
+
+.control-schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.control-add-schedule-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: #10b981;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+
+.control-add-schedule-btn:hover {
+  background-color: #059669;
+}
+
+.control-schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.control-schedule-item {
+  padding: 16px;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.control-schedule-item-active {
+  background-color: #f0fdf4;
+  border-color: #10b981;
+}
+
+.control-schedule-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.control-schedule-device-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.control-schedule-time {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.control-schedule-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.control-schedule-toggle-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: white;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.control-schedule-toggle-btn:hover {
+  background-color: #f9fafb;
+}
+
+.control-schedule-delete-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #fee2e2;
+  color: #dc2626;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.control-schedule-delete-btn:hover {
+  background-color: #fecaca;
+}
+
+.control-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.control-modal-container {
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.control-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.control-modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0;
+}
+
+.control-modal-close {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  color: #6b7280;
+}
+
+.control-modal-close:hover {
+  color: #1f2937;
+}
+
+.control-modal-body {
+  /* Modal body styles */
+}
+
+.control-modal-field {
+  margin-bottom: 16px;
+}
+
+.control-modal-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.control-modal-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.control-modal-input:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.control-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.control-modal-cancel-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: white;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.control-modal-cancel-btn:hover {
+  background-color: #f9fafb;
+}
+
+.control-modal-save-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #10b981;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+
+.control-modal-save-btn:hover {
+  background-color: #059669;
+}
+
+@media (max-width: 768px) {
+  .control-page {
+    padding: 16px;
+  }
+
+  .control-title {
+    font-size: 24px;
+  }
+
+  .control-devices-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .control-schedule-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .control-schedule-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

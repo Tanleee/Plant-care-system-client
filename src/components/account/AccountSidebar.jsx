@@ -107,8 +107,8 @@ export default function AccountSidebar({
         {[
           { id: "profile", icon: User, label: "Hồ Sơ" },
           { id: "password", icon: Lock, label: "Mật Khẩu", disabled: isGoogle },
-          { id: "bookings", icon: Package, label: "Tour Đã Đặt" },
-          { id: "billing", icon: CreditCard, label: "Thanh Toán" },
+          // { id: "bookings", icon: Package, label: "Tour Đã Đặt" },
+          // { id: "billing", icon: CreditCard, label: "Thanh Toán" },
           { id: "notifications", icon: Bell, label: "Thông Báo" },
         ].map((item) => (
           <button

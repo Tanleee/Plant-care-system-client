@@ -12,6 +12,7 @@ import LoginForm from "./../components/authentication/LoginForm";
 import SignupForm from "./../components/authentication/SignupForm";
 
 import ForgotPasswordModal from "../components/authentication/ForgotPasswordModal";
+import AccountRecoveryModal from "./../components/authentication/AccountRecoveryModal";
 
 // Main AuthPage Component
 const AuthPage = () => {
@@ -20,6 +21,7 @@ const AuthPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+  const [isRecoverModalOpen, setIsRecoverModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -133,6 +135,22 @@ const AuthPage = () => {
     showError("Đăng nhập Google thất bại", 2000);
   };
 
+  const handleRecover = async () => {
+    try {
+      const { data } = await axios.patch("/api/v1/users/recover-account", {
+        email: formData.email,
+      });
+
+      if (data.status === "success") {
+        showSuccess(data.message, 2000);
+      }
+    } catch (err) {
+      showError(err.response.data.message, 2000);
+    } finally {
+      setIsRecoverModalOpen(false);
+    }
+  };
+
   const toggleAuthMode = () => {
     setIsLogin(!isLogin);
     setFormData({
@@ -157,6 +175,13 @@ const AuthPage = () => {
           onClose={hideAlert}
         />
       )}
+
+      <AccountRecoveryModal
+        isOpen={isRecoverModalOpen}
+        onClose={() => setIsRecoverModalOpen(false)}
+        onRecover={handleRecover}
+        userEmail={formData.email}
+      />
 
       <div className="auth-page-wrapper">
         <ForgotPasswordModal

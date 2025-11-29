@@ -194,7 +194,7 @@
 }
 
 .recovery-modal-info-list li::before {
-  content: '✓';
+  content: "✓";
   display: inline-block;
   margin-right: 0.5rem;
   color: #059669;

@@ -9,7 +9,7 @@ import {
   X,
   Leaf,
 } from "lucide-react";
-import { useNavigate, useRouteLoaderData } from "react-router";
+import { useNavigate, useRouteLoaderData, useLocation } from "react-router"; // Thêm useLocation
 import "./../../assets/navBar.css";
 
 function getPhotoUrl(fileName) {
@@ -31,27 +31,30 @@ function Brand() {
 }
 
 // Navigation Menu Component
-function NavMenu({ currentPage, onPageChange, isMobile, onMobileClose }) {
+function NavMenu({ onMobileClose }) {
   const navigate = useNavigate();
+  const location = useLocation(); // Lấy location hiện tại
 
   const menuItems = [
     { id: "dashboard", label: "Dashboard", link: "/", icon: Activity },
-    { id: "charts", label: "Biểu đồ", link: "charts", icon: TrendingUp },
-    { id: "control", label: "Điều khiển", link: "controls", icon: Settings },
-    { id: "history", label: "Lịch sử", link: "history", icon: History },
+    { id: "charts", label: "Biểu đồ", link: "/charts", icon: TrendingUp },
+    { id: "control", label: "Điều khiển", link: "/controls", icon: Settings },
+    { id: "history", label: "Lịch sử", link: "/history", icon: History },
   ];
 
   return (
-    <nav className={`navbar-menu ${isMobile ? "mobile" : ""}`}>
+    <nav className="navbar-menu">
       {menuItems.map((item) => {
         const Icon = item.icon;
+        // Kiểm tra xem path hiện tại có match với link không
+        const isActive = location.pathname === item.link;
+
         return (
           <button
             key={item.id}
-            className={`nav-item ${currentPage === item.id ? "active" : ""}`}
+            className={`nav-item ${isActive ? "active" : ""}`}
             onClick={() => {
               navigate(item.link);
-              onPageChange(item.id);
               if (onMobileClose) onMobileClose();
             }}
           >
@@ -71,11 +74,8 @@ function UserSection({ user, isMobile }) {
 
   const handleLogout = async () => {
     try {
-      // Gọi API logout nếu cần
       const res = await fetch("/api/v1/users/logout");
       if (!res.ok) throw new Error("Logout failed");
-
-      // Redirect về trang login
       window.location.href = "/auth";
     } catch (err) {
       console.error("Logout error:", err.message);
@@ -106,13 +106,6 @@ function UserSection({ user, isMobile }) {
           <button className="user-menu-item" onClick={() => navigate("/user")}>
             <span>👤</span>
             <span>Hồ sơ</span>
-          </button>
-          <button
-            className="user-menu-item"
-            onClick={() => navigate("/settings")}
-          >
-            <span>⚙️</span>
-            <span>Cài đặt</span>
           </button>
           <button
             className="user-menu-item"
@@ -170,10 +163,6 @@ function UserSection({ user, isMobile }) {
             <span>👤</span>
             <span>Hồ sơ</span>
           </div>
-          <div className="user-menu-item" onClick={() => navigate("/settings")}>
-            <span>⚙️</span>
-            <span>Cài đặt</span>
-          </div>
           <div
             className="user-menu-item"
             onClick={() => navigate("/notifications")}
@@ -228,13 +217,8 @@ function AuthButtons({ isMobile }) {
 }
 
 // Main NavBar Component
-const NavBar = ({
-  currentPage = "dashboard",
-  onPageChange = () => {},
-  onLogout = null,
-}) => {
+const NavBar = ({ onLogout = null }) => {
   const user = useRouteLoaderData("root");
-
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -248,12 +232,11 @@ const NavBar = ({
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* Brand Logo */}
         <Brand />
 
         {/* Desktop Navigation Menu */}
         <div className="navbar-menu-desktop">
-          <NavMenu currentPage={currentPage} onPageChange={onPageChange} />
+          <NavMenu />
         </div>
 
         {/* Desktop User Section hoặc Auth Buttons */}
@@ -274,15 +257,8 @@ const NavBar = ({
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="mobile-menu">
-          {/* Mobile Navigation */}
-          <NavMenu
-            currentPage={currentPage}
-            onPageChange={onPageChange}
-            isMobile={true}
-            onMobileClose={closeMobileMenu}
-          />
+          <NavMenu onMobileClose={closeMobileMenu} />
 
-          {/* Mobile User Section hoặc Auth Buttons */}
           {user ? (
             <UserSection user={user} onLogout={onLogout} isMobile={true} />
           ) : (

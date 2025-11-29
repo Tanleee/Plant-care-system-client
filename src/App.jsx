@@ -8,6 +8,9 @@ import {
 
 import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
+import ChartsPage from "./pages/ChartsPage";
+import ControlPage from "./pages/ControlsPage";
+import HistoryPage from "./pages/HistoryPage";
 
 import currentUserLoader from "./loaders/currentUserLoader";
 import UserAccountPage from "./pages/UserAccountPage";
@@ -19,6 +22,9 @@ function App() {
         <Route index element={<HomePage />} />
         <Route path="auth" element={<AuthPage />} />
         <Route path="user" element={<UserAccountPage />} />
+        <Route path="charts" element={<ChartsPage />} />
+        <Route path="controls" element={<ControlPage />} />
+        <Route path="history" element={<HistoryPage />} />
       </Route>
     )
   );

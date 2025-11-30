@@ -8,8 +8,10 @@ import {
   Menu,
   X,
   Leaf,
+  Bell,
 } from "lucide-react";
 import { useNavigate, useRouteLoaderData, useLocation } from "react-router"; // Thêm useLocation
+import NotificationCenter from "./NotificationCenter";
 import "./../../assets/navBar.css";
 
 function getPhotoUrl(fileName) {
@@ -70,6 +72,9 @@ function NavMenu({ onMobileClose }) {
 // User Section Component (khi đã đăng nhập)
 function UserSection({ user, isMobile }) {
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const { notifications } = useRouteLoaderData("root");
+  const unreadCount = notifications?.filter((n) => !n.isRead).length || 0;
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -109,10 +114,13 @@ function UserSection({ user, isMobile }) {
           </button>
           <button
             className="user-menu-item"
-            onClick={() => navigate("/notifications")}
+            onClick={() => setShowNotifications(true)}
           >
             <span>🔔</span>
             <span>Thông báo</span>
+            {unreadCount > 0 && (
+              <span className="notif-count-badge">{unreadCount}</span>
+            )}
           </button>
           <div className="user-menu-divider"></div>
           <button className="user-menu-item logout" onClick={handleLogout}>
@@ -120,12 +128,30 @@ function UserSection({ user, isMobile }) {
             <span>Đăng xuất</span>
           </button>
         </div>
+
+        {/* Notification Center for Mobile */}
+        <NotificationCenter
+          isOpen={showNotifications}
+          onClose={() => setShowNotifications(false)}
+        />
       </div>
     );
   }
 
   return (
     <div className="navbar-user">
+      {/* Notification Bell Icon */}
+      <button
+        className="notif-bell-btn"
+        onClick={() => setShowNotifications(true)}
+      >
+        <Bell size={20} />
+        {unreadCount > 0 && (
+          <span className="notif-bell-badge">{unreadCount}</span>
+        )}
+      </button>
+
+      {/* User Menu Button */}
       <button
         className="user-button"
         onClick={() => setShowUserMenu(!showUserMenu)}
@@ -157,18 +183,12 @@ function UserSection({ user, isMobile }) {
         </svg>
       </button>
 
+      {/* User Menu Dropdown */}
       {showUserMenu && (
         <div className="user-menu">
           <div className="user-menu-item" onClick={() => navigate("/user")}>
             <span>👤</span>
             <span>Hồ sơ</span>
-          </div>
-          <div
-            className="user-menu-item"
-            onClick={() => navigate("/notifications")}
-          >
-            <span>🔔</span>
-            <span>Thông báo</span>
           </div>
           <div className="user-menu-divider"></div>
           <div className="user-menu-item logout" onClick={handleLogout}>
@@ -177,10 +197,15 @@ function UserSection({ user, isMobile }) {
           </div>
         </div>
       )}
+
+      {/* Notification Center */}
+      <NotificationCenter
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+      />
     </div>
   );
 }
-
 // Auth Buttons Component (khi chưa đăng nhập)
 function AuthButtons({ isMobile }) {
   const navigate = useNavigate();
@@ -218,7 +243,7 @@ function AuthButtons({ isMobile }) {
 
 // Main NavBar Component
 const NavBar = ({ onLogout = null }) => {
-  const user = useRouteLoaderData("root");
+  const user = useRouteLoaderData("root").user;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {

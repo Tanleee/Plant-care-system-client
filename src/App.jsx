@@ -13,7 +13,7 @@ import ControlPage from "./pages/ControlsPage";
 import HistoryPage from "./pages/HistoryPage";
 import UserAccountPage from "./pages/UserAccountPage";
 
-import currentUserLoader from "./loaders/currentUserLoader";
+import rootLoader from "./loaders/rootLoader";
 import chartDataLoader from "./loaders/chartsDataLoader";
 import controlsDataLoader from "./loaders/controlsDataLoader";
 import historyDataLoader from "./loaders/historyDataLoader";
@@ -21,7 +21,7 @@ import historyDataLoader from "./loaders/historyDataLoader";
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" loader={currentUserLoader} id="root">
+      <Route path="/" loader={rootLoader} id="root">
         <Route index element={<HomePage />} />
         <Route path="auth" element={<AuthPage />} />
         <Route path="user" element={<UserAccountPage />} />

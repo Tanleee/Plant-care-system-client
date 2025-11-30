@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   History,
   Droplet,
@@ -12,6 +12,7 @@ import {
   User,
   Activity,
 } from "lucide-react";
+import { useLoaderData } from "react-router";
 import "./../assets/historyPageStyle.css";
 import NavBar from "../components/shared/NavBar";
 import Footer from "../components/shared/Footer";
@@ -20,6 +21,7 @@ import Footer from "../components/shared/Footer";
 
 const deviceInfo = {
   pump: { name: "Máy bơm nước", icon: Droplet, color: "#3b82f6" },
+  pumper: { name: "Máy bơm nước", icon: Droplet, color: "#3b82f6" }, // Alias for API
   fan: { name: "Quạt thông gió", icon: Fan, color: "#10b981" },
   light: { name: "Đèn chiếu sáng", icon: Lightbulb, color: "#f59e0b" },
 };
@@ -30,7 +32,8 @@ const modeLabels = {
   schedule: "Lịch trình",
 };
 
-const formatDateTime = (date) => {
+const formatDateTime = (dateInput) => {
+  const date = new Date(dateInput);
   const now = new Date();
   const diff = now - date;
   const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -46,6 +49,40 @@ const formatDateTime = (date) => {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+  });
+};
+
+// Filter logs by date range
+const filterByDateRange = (logs, dateRange, customDateStart, customDateEnd) => {
+  const now = new Date();
+
+  return logs.filter((log) => {
+    const logDate = new Date(log.timestamp);
+
+    switch (dateRange) {
+      case "today":
+        return logDate.toDateString() === now.toDateString();
+
+      case "week":
+        const weekAgo = new Date(now);
+        weekAgo.setDate(now.getDate() - 7);
+        return logDate >= weekAgo;
+
+      case "month":
+        const monthAgo = new Date(now);
+        monthAgo.setMonth(now.getMonth() - 1);
+        return logDate >= monthAgo;
+
+      case "custom":
+        if (!customDateStart || !customDateEnd) return true;
+        const start = new Date(customDateStart);
+        const end = new Date(customDateEnd);
+        end.setHours(23, 59, 59, 999); // Include the entire end day
+        return logDate >= start && logDate <= end;
+
+      default:
+        return true;
+    }
   });
 };
 
@@ -90,34 +127,65 @@ const HistoryHeader = () => {
   );
 };
 
-const HistoryStats = () => {
+const HistoryStats = ({ controlLogs }) => {
+  const stats = useMemo(() => {
+    if (!controlLogs || controlLogs.length === 0) {
+      return {
+        total: 0,
+        auto: 0,
+        manual: 0,
+        schedule: 0,
+        autoPercent: 0,
+        manualPercent: 0,
+        schedulePercent: 0,
+      };
+    }
+
+    const total = controlLogs.length;
+    const auto = controlLogs.filter((log) => log.mode === "auto").length;
+    const manual = controlLogs.filter((log) => log.mode === "manual").length;
+    const schedule = controlLogs.filter(
+      (log) => log.mode === "schedule"
+    ).length;
+
+    return {
+      total,
+      auto,
+      manual,
+      schedule,
+      autoPercent: total > 0 ? Math.round((auto / total) * 100) : 0,
+      manualPercent: total > 0 ? Math.round((manual / total) * 100) : 0,
+      schedulePercent: total > 0 ? Math.round((schedule / total) * 100) : 0,
+    };
+  }, [controlLogs]);
+
   return (
     <div className="history-stats-grid">
       <StatCard
         title="Tổng thao tác"
-        value="127"
-        subtitle="Hôm nay"
+        value={stats.total}
+        subtitle="Tất cả"
         icon={Activity}
         color="#10b981"
       />
       <StatCard
         title="Chế độ tự động"
-        value="89"
-        subtitle="70% tổng số"
+        value={stats.auto}
+        subtitle={`${stats.autoPercent}% tổng số`}
         icon={Activity}
         color="#3b82f6"
       />
       <StatCard
         title="Thủ công"
-        value="28"
-        subtitle="22% tổng số"
+        value={stats.manual}
+        subtitle={`${stats.manualPercent}% tổng số`}
         icon={User}
         color="#f59e0b"
       />
       <StatCard
         title="Lịch trình"
-        value="10"
-        subtitle="8% tổng số"
+        value={stats.schedule}
+        subtitle={`${stats.schedulePercent}% tổng số`}
         icon={Calendar}
         color="#8b5cf6"
       />
@@ -176,6 +244,7 @@ const HistoryFilters = ({
         >
           <option value="all">Tất cả</option>
           <option value="pump">Máy bơm</option>
+          <option value="pumper">Máy bơm</option>
           <option value="fan">Quạt</option>
           <option value="light">Đèn</option>
         </select>
@@ -255,7 +324,7 @@ const HistorySearchBar = ({ activeTab, searchTerm, setSearchTerm }) => {
 };
 
 const ControlLogItem = ({ log }) => {
-  const device = deviceInfo[log.device];
+  const device = deviceInfo[log.device] || deviceInfo.pump;
   const Icon = device.icon;
 
   return (
@@ -282,7 +351,7 @@ const ControlLogItem = ({ log }) => {
         <div className="history-log-details">
           <span className="history-log-mode">
             <Activity size={14} />
-            {modeLabels[log.mode]}
+            {modeLabels[log.mode] || log.mode}
           </span>
           <span className="history-log-time">
             <Clock size={14} />
@@ -305,35 +374,47 @@ const SensorLogItem = ({ log }) => {
       <div className="history-sensor-data">
         <div className="history-sensor-metric">
           <span className="sensor-label">Nhiệt độ</span>
-          <span className="sensor-value temperature">{log.temperature}°C</span>
+          <span className="sensor-value temperature">
+            {log.temperature?.toFixed(1) || "--"}°C
+          </span>
         </div>
 
         <div className="history-sensor-metric">
           <span className="sensor-label">Độ ẩm KK</span>
-          <span className="sensor-value humidity">{log.humidity}%</span>
+          <span className="sensor-value humidity">
+            {log.humidity?.toFixed(1) || "--"}%
+          </span>
         </div>
 
         <div className="history-sensor-metric">
           <span className="sensor-label">Độ ẩm đất</span>
-          <span className="sensor-value soil">{log.soilMoisture}%</span>
+          <span className="sensor-value soil">
+            {log.soilMoisture?.toFixed(1) || "--"}%
+          </span>
         </div>
 
         <div className="history-sensor-metric">
           <span className="sensor-label">Ánh sáng</span>
-          <span className="sensor-value light">{log.light} Lux</span>
+          <span className="sensor-value light">
+            {log.light?.toFixed(0) || "--"} Lux
+          </span>
         </div>
       </div>
     </div>
   );
 };
 
-const HistoryContent = ({ activeTab, filteredControlLogs, sensorLogs }) => {
+const HistoryContent = ({
+  activeTab,
+  filteredControlLogs,
+  filteredSensorLogs,
+}) => {
   if (activeTab === "control") {
     return (
       <div className="history-log-list">
         {filteredControlLogs.length > 0 ? (
-          filteredControlLogs.map((log) => (
-            <ControlLogItem key={log.id} log={log} />
+          filteredControlLogs.map((log, index) => (
+            <ControlLogItem key={log._id || log.id || index} log={log} />
           ))
         ) : (
           <div className="history-empty">
@@ -348,8 +429,10 @@ const HistoryContent = ({ activeTab, filteredControlLogs, sensorLogs }) => {
   // Sensor Tab
   return (
     <div className="history-sensor-list">
-      {sensorLogs.length > 0 ? (
-        sensorLogs.map((log) => <SensorLogItem key={log.id} log={log} />)
+      {filteredSensorLogs.length > 0 ? (
+        filteredSensorLogs.map((log, index) => (
+          <SensorLogItem key={log._id || log.id || index} log={log} />
+        ))
       ) : (
         <div className="history-empty">
           <Activity size={48} />
@@ -360,18 +443,78 @@ const HistoryContent = ({ activeTab, filteredControlLogs, sensorLogs }) => {
   );
 };
 
-const HistoryPagination = () => {
+const HistoryPagination = ({ currentPage, totalPages, onPageChange }) => {
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, 4, "...", totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(
+          1,
+          "...",
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages
+        );
+      } else {
+        pages.push(
+          1,
+          "...",
+          currentPage - 1,
+          currentPage,
+          currentPage + 1,
+          "...",
+          totalPages
+        );
+      }
+    }
+
+    return pages;
+  };
+
+  if (totalPages <= 1) return null;
+
   return (
     <div className="history-pagination">
-      <button className="history-pagination-btn">Trước</button>
+      <button
+        className="history-pagination-btn"
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        Trước
+      </button>
       <div className="history-pagination-pages">
-        <button className="history-pagination-page active">1</button>
-        <button className="history-pagination-page">2</button>
-        <button className="history-pagination-page">3</button>
-        <span>...</span>
-        <button className="history-pagination-page">10</button>
+        {getPageNumbers().map((page, index) =>
+          page === "..." ? (
+            <span key={`ellipsis-${index}`}>...</span>
+          ) : (
+            <button
+              key={page}
+              className={`history-pagination-page ${
+                currentPage === page ? "active" : ""
+              }`}
+              onClick={() => onPageChange(page)}
+            >
+              {page}
+            </button>
+          )
+        )}
       </div>
-      <button className="history-pagination-btn">Sau</button>
+      <button
+        className="history-pagination-btn"
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        Sau
+      </button>
     </div>
   );
 };
@@ -386,85 +529,119 @@ const HistoryPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [customDateStart, setCustomDateStart] = useState("");
   const [customDateEnd, setCustomDateEnd] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
-  // Sample data
-  const controlLogs = [
-    {
-      id: 1,
-      device: "pump",
-      status: true,
-      mode: "auto",
-      timestamp: new Date("2024-01-15T08:30:00"),
-      userId: "507f1f77bcf86cd799439011",
-    },
-    {
-      id: 2,
-      device: "light",
-      status: false,
-      mode: "manual",
-      timestamp: new Date("2024-01-15T07:15:00"),
-      userId: "507f1f77bcf86cd799439011",
-    },
-    {
-      id: 3,
-      device: "fan",
-      status: true,
-      mode: "schedule",
-      timestamp: new Date("2024-01-15T06:00:00"),
-      userId: "507f1f77bcf86cd799439011",
-    },
-    {
-      id: 4,
-      device: "pump",
-      status: false,
-      mode: "auto",
-      timestamp: new Date("2024-01-14T18:45:00"),
-      userId: "507f1f77bcf86cd799439011",
-    },
-    {
-      id: 5,
-      device: "light",
-      status: true,
-      mode: "schedule",
-      timestamp: new Date("2024-01-14T06:00:00"),
-      userId: "507f1f77bcf86cd799439011",
-    },
-  ];
+  // Get real data from loader
+  const historyData = useLoaderData();
 
-  const sensorLogs = [
-    {
-      id: 1,
-      temperature: 28.5,
-      humidity: 65,
-      soilMoisture: 58,
-      light: 1200,
-      timestamp: new Date("2024-01-15T08:00:00"),
-    },
-    {
-      id: 2,
-      temperature: 27.8,
-      humidity: 68,
-      soilMoisture: 55,
-      light: 980,
-      timestamp: new Date("2024-01-15T07:00:00"),
-    },
-    {
-      id: 3,
-      temperature: 26.2,
-      humidity: 70,
-      soilMoisture: 52,
-      light: 450,
-      timestamp: new Date("2024-01-15T06:00:00"),
-    },
-  ];
+  // Extract data arrays (handle both direct array and wrapped in .data)
+  const controlLogs = useMemo(() => {
+    const logs = historyData?.controlLog || [];
+    return Array.isArray(logs) ? logs : [];
+  }, [historyData]);
 
-  // Filtering Logic
-  const filteredControlLogs = controlLogs.filter((log) => {
-    if (filterType !== "all" && log.device !== filterType) return false;
-    if (filterMode !== "all" && log.mode !== filterMode) return false;
-    // Note: Search term logic wasn't fully implemented in original code, kept as is.
-    return true;
-  });
+  const sensorLogs = useMemo(() => {
+    const logs = historyData?.sensorData || [];
+    return Array.isArray(logs) ? logs : [];
+  }, [historyData]);
+
+  // Filter control logs
+  const filteredControlLogs = useMemo(() => {
+    let filtered = [...controlLogs];
+
+    // Filter by device type
+    if (filterType !== "all") {
+      filtered = filtered.filter(
+        (log) =>
+          log.device === filterType ||
+          (filterType === "pump" && log.device === "pumper") ||
+          (filterType === "pumper" && log.device === "pump")
+      );
+    }
+
+    // Filter by mode
+    if (filterMode !== "all") {
+      filtered = filtered.filter((log) => log.mode === filterMode);
+    }
+
+    // Filter by date range
+    filtered = filterByDateRange(
+      filtered,
+      dateRange,
+      customDateStart,
+      customDateEnd
+    );
+
+    // Search filter
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = filtered.filter((log) => {
+        const deviceName = deviceInfo[log.device]?.name?.toLowerCase() || "";
+        const mode = modeLabels[log.mode]?.toLowerCase() || "";
+        return deviceName.includes(searchLower) || mode.includes(searchLower);
+      });
+    }
+
+    // Sort by timestamp (newest first)
+    filtered.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    return filtered;
+  }, [
+    controlLogs,
+    filterType,
+    filterMode,
+    dateRange,
+    customDateStart,
+    customDateEnd,
+    searchTerm,
+  ]);
+
+  // Filter sensor logs
+  const filteredSensorLogs = useMemo(() => {
+    let filtered = [...sensorLogs];
+
+    // Filter by date range
+    filtered = filterByDateRange(
+      filtered,
+      dateRange,
+      customDateStart,
+      customDateEnd
+    );
+
+    // Sort by timestamp (newest first)
+    filtered.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    return filtered;
+  }, [sensorLogs, dateRange, customDateStart, customDateEnd]);
+
+  // Pagination logic
+  const paginatedControlLogs = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredControlLogs.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredControlLogs, currentPage]);
+
+  const paginatedSensorLogs = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredSensorLogs.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredSensorLogs, currentPage]);
+
+  const totalPages = useMemo(() => {
+    const logs =
+      activeTab === "control" ? filteredControlLogs : filteredSensorLogs;
+    return Math.ceil(logs.length / itemsPerPage);
+  }, [activeTab, filteredControlLogs, filteredSensorLogs]);
+
+  // Reset page when filters change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Reset page when tab or filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, filterType, filterMode, dateRange, searchTerm]);
 
   return (
     <>
@@ -472,7 +649,7 @@ const HistoryPage = () => {
       <div className="history-page">
         <HistoryHeader />
 
-        <HistoryStats />
+        <HistoryStats controlLogs={controlLogs} />
 
         <div className="history-card">
           <HistoryTabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -501,12 +678,16 @@ const HistoryPage = () => {
           <div className="history-content">
             <HistoryContent
               activeTab={activeTab}
-              filteredControlLogs={filteredControlLogs}
-              sensorLogs={sensorLogs}
+              filteredControlLogs={paginatedControlLogs}
+              filteredSensorLogs={paginatedSensorLogs}
             />
           </div>
 
-          <HistoryPagination />
+          <HistoryPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
       <Footer />

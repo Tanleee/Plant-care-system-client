@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background Circle (optional - có thể bỏ) -->
+  <circle cx="100" cy="100" r="90" fill="#d1fae5" opacity="0.3"/>
+  
+  <!-- Pot -->
+  <path d="M 75 140 L 80 155 L 120 155 L 125 140 Z" 
+        fill="#6b7280"/>
+  <rect x="78" y="155" width="44" height="6" 
+        fill="#4b5563" 
+        rx="2"/>
+  
+  <!-- Stem -->
+  <rect x="97" y="80" width="6" height="60" 
+        fill="#10b981" 
+        rx="2"/>
+  
+  <!-- Bottom Left Leaf -->
+  <ellipse cx="70" cy="120" rx="30" ry="15" 
+           fill="#10b981" 
+           transform="rotate(-20 70 120)"/>
+  
+  <!-- Bottom Right Leaf -->
+  <ellipse cx="130" cy="120" rx="30" ry="15" 
+           fill="#059669" 
+           transform="rotate(20 130 120)"/>
+  
+  <!-- Middle Left Leaf -->
+  <ellipse cx="65" cy="100" rx="32" ry="16" 
+           fill="#10b981" 
+           transform="rotate(-25 65 100)"/>
+  
+  <!-- Middle Right Leaf -->
+  <ellipse cx="135" cy="100" rx="32" ry="16" 
+           fill="#059669" 
+           transform="rotate(25 135 100)"/>
+  
+  <!-- Top Left Leaf -->
+  <ellipse cx="75" cy="80" rx="28" ry="14" 
+           fill="#10b981" 
+           transform="rotate(-30 75 80)"/>
+  
+  <!-- Top Right Leaf -->
+  <ellipse cx="125" cy="80" rx="28" ry="14" 
+           fill="#059669" 
+           transform="rotate(30 125 80)"/>
+  
+  <!-- Top Center Leaf -->
+  <ellipse cx="100" cy="65" rx="20" ry="25" 
+           fill="#10b981"/>
+</svg>

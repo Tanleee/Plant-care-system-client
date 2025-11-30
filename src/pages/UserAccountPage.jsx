@@ -18,7 +18,7 @@ import DeleteAccountModal from "./../components/account/DeleteAccountModal";
 
 import { getUserPhotoUrl, isGoogleUser } from "../utils/imageHelper";
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:3000/api/v1";
+  import.meta.env.VITE_API_URL || "http://127.0.0.1:3000/api/v1";
 
 import "./../assets/userAccountStyle.css";
 

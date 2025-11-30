@@ -1,8 +1,8 @@
 import dataLoader from "./dataLoader";
 
 export default async function rootLoader() {
-  const user = await dataLoader("/api/v1/users/me");
-  const notifications = await dataLoader("/api/v1/notifications");
+  const user = await dataLoader("/users/me");
+  const notifications = await dataLoader("/notifications");
 
   return { user, notifications };
 }

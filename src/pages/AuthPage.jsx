@@ -14,6 +14,9 @@ import SignupForm from "./../components/authentication/SignupForm";
 import ForgotPasswordModal from "../components/authentication/ForgotPasswordModal";
 import AccountRecoveryModal from "./../components/authentication/AccountRecoveryModal";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:3000/api/v1";
+
 // Main AuthPage Component
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -46,7 +49,7 @@ const AuthPage = () => {
     try {
       const result = await axios({
         method: "post",
-        url: "/api/v1/users/login",
+        url: `${API_BASE_URL}/users/login`,
         data: {
           email,
           password,
@@ -76,7 +79,7 @@ const AuthPage = () => {
     try {
       const result = await axios({
         method: "post",
-        url: "api/v1/users/signup",
+        url: `${API_BASE_URL}/users/signup`,
         data: {
           name,
           email,
@@ -104,7 +107,7 @@ const AuthPage = () => {
     try {
       const result = await axios({
         method: "post",
-        url: "/api/v1/users/google-auth",
+        url: `${API_BASE_URL}/users/google-auth`,
         data: {
           credential: credentialResponse.credential,
           isSignUp: !isLogin,
@@ -137,9 +140,12 @@ const AuthPage = () => {
 
   const handleRecover = async () => {
     try {
-      const { data } = await axios.patch("/api/v1/users/recover-account", {
-        email: formData.email,
-      });
+      const { data } = await axios.patch(
+        `${API_BASE_URL}/users/recover-account`,
+        {
+          email: formData.email,
+        }
+      );
 
       if (data.status === "success") {
         showSuccess(data.message, 2000);

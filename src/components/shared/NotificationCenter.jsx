@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import "./../../assets/notificationCenterStyle.css";
 import { useRouteLoaderData } from "react-router";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://127.0.0.1:3000/api/v1";
 
 const NotificationCenter = ({ isOpen, onClose }) => {
   // const [notifications, setNotifications] = useState([]);
@@ -23,15 +25,17 @@ const NotificationCenter = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
 
   const markAsRead = async (id) => {
-    await fetch(`/api/v1/notifications/${id}/read`, { method: "PATCH" });
+    await fetch(`${API_BASE_URL}/notifications/${id}/read`, {
+      method: "PATCH",
+    });
   };
 
   const markAllAsRead = async () => {
-    await fetch("/api/v1/notifications/read-all", { method: "PATCH" });
+    await fetch(`${API_BASE_URL}/notifications/read-all`, { method: "PATCH" });
   };
 
   const deleteNotification = async (id) => {
-    await fetch(`/api/v1/notifications/${id}`, { method: "DELETE" });
+    await fetch(`${API_BASE_URL}/notifications/${id}`, { method: "DELETE" });
   };
 
   const getIcon = (type) => {

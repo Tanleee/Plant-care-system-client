@@ -1,8 +1,8 @@
 import dataLoader from "./dataLoader";
 
 export default async function historyDataLoader() {
-  const controlLog = await dataLoader("/api/v1/controlLog");
-  const sensorData = await dataLoader("/api/v1/sensorData");
+  const controlLog = await dataLoader("/control-log");
+  const sensorData = await dataLoader("/sensor-data");
 
   return { controlLog, sensorData };
 }

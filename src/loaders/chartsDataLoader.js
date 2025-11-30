@@ -1,8 +1,8 @@
 import dataLoader from "./dataLoader";
 
 export default async function chartsDataLoader() {
-  const sensorDataArchieve = await dataLoader("/api/v1/sensorDataArchieve");
-  const sensorData = await dataLoader("/api/v1/sensorData");
+  const sensorDataArchieve = await dataLoader("/sensor-data-archieve");
+  const sensorData = await dataLoader("/sensor-data");
 
   return { sensorDataArchieve, sensorData };
 }

@@ -17,12 +17,14 @@ import NotificationsTab from "../components/account/NotificationsTab";
 import DeleteAccountModal from "./../components/account/DeleteAccountModal";
 
 import { getUserPhotoUrl, isGoogleUser } from "../utils/imageHelper";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:3000/api/v1";
 
 import "./../assets/userAccountStyle.css";
 
 export default function UserAccountPage() {
   // const navigate = useNavigate();
-  const userData = useRouteLoaderData("root");
+  const userData = useRouteLoaderData("root").user;
   const { alert, showSuccess, showError, showWarning, hideAlert } = useAlert();
 
   const fileInputRef = useRef(null);
@@ -160,7 +162,10 @@ export default function UserAccountPage() {
       formData.append("email", profileData.email);
       if (selectedPhoto) formData.append("photo", selectedPhoto);
 
-      const { data } = await axios.patch("/api/v1/users/updateMe", formData);
+      const { data } = await axios.patch(
+        `${API_BASE_URL}/users/updateMe`,
+        formData
+      );
       if (data.status === "success") {
         showSuccess("Hồ sơ cập nhật thành công!", 36);
         setTimeout(() => window.location.reload(), 2000);
@@ -192,11 +197,14 @@ export default function UserAccountPage() {
 
     setIsUpdating(true);
     try {
-      const { data } = await axios.patch("/api/v1/users/updateMyPassword", {
-        passwordCurrent: passwordData.currentPassword,
-        password: passwordData.newPassword,
-        passwordConfirm: passwordData.confirmPassword,
-      });
+      const { data } = await axios.patch(
+        `${API_BASE_URL}/users/updateMyPassword`,
+        {
+          passwordCurrent: passwordData.currentPassword,
+          password: passwordData.newPassword,
+          passwordConfirm: passwordData.confirmPassword,
+        }
+      );
 
       if (data.status === "success") {
         showSuccess("Mật khẩu đã được thay đổi thành công!", 2000);
@@ -216,7 +224,7 @@ export default function UserAccountPage() {
 
   const handleDeleteAccount = async () => {
     try {
-      const res = await axios.delete("/api/v1/users/deleteMe");
+      const res = await axios.delete(`${API_BASE_URL}/users/deleteMe`);
       console.log(typeof res.status);
       if (!res.status === 204) {
         throw new Error("Lỗi khi thực hiện xóa tài khoản");
@@ -231,7 +239,6 @@ export default function UserAccountPage() {
     }
   };
 
-  // ✅ Fix: Handler không gọi updatePasswordValidation nữa
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordData((prev) => ({ ...prev, [name]: value }));

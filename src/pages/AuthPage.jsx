@@ -15,7 +15,8 @@ import ForgotPasswordModal from "../components/authentication/ForgotPasswordModa
 import AccountRecoveryModal from "./../components/authentication/AccountRecoveryModal";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://127.0.0.1:3000/api/v1";
+  import.meta.env.VITE_API_URL ||
+  "https://plant-care-system-server.onrender.com/api/v1";
 
 // Main AuthPage Component
 const AuthPage = () => {

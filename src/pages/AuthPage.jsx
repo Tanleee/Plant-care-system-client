@@ -46,7 +46,7 @@ const AuthPage = () => {
     try {
       const result = await axios({
         method: "post",
-        url: `/api/v1/users/login`,
+        url: "/api/v1/users/login",
         data: {
           email,
           password,
@@ -76,7 +76,7 @@ const AuthPage = () => {
     try {
       const result = await axios({
         method: "post",
-        url: `/api/v1/users/signup`,
+        url: "/api/v1/users/signup",
         data: {
           name,
           email,
@@ -137,7 +137,7 @@ const AuthPage = () => {
 
   const handleRecover = async () => {
     try {
-      const { data } = await axios.patch(`/api/v1/users/recover-account`, {
+      const { data } = await axios.patch("/api/v1/users/recover-account", {
         email: formData.email,
       });
 

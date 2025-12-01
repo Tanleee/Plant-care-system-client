@@ -14,10 +14,6 @@ import SignupForm from "./../components/authentication/SignupForm";
 import ForgotPasswordModal from "../components/authentication/ForgotPasswordModal";
 import AccountRecoveryModal from "./../components/authentication/AccountRecoveryModal";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  "https://plant-care-system-server.onrender.com/api/v1";
-
 // Main AuthPage Component
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -50,7 +46,7 @@ const AuthPage = () => {
     try {
       const result = await axios({
         method: "post",
-        url: `${API_BASE_URL}/users/login`,
+        url: `/api/v1/users/login`,
         data: {
           email,
           password,
@@ -80,7 +76,7 @@ const AuthPage = () => {
     try {
       const result = await axios({
         method: "post",
-        url: `${API_BASE_URL}/users/signup`,
+        url: `/api/v1/users/signup`,
         data: {
           name,
           email,
@@ -108,7 +104,7 @@ const AuthPage = () => {
     try {
       const result = await axios({
         method: "post",
-        url: `https://plant-care-system-server.onrender.com/api/v1/users/google-auth`,
+        url: "/api/v1/users/google-auth",
         data: {
           credential: credentialResponse.credential,
           isSignUp: !isLogin,
@@ -141,12 +137,9 @@ const AuthPage = () => {
 
   const handleRecover = async () => {
     try {
-      const { data } = await axios.patch(
-        `${API_BASE_URL}/users/recover-account`,
-        {
-          email: formData.email,
-        }
-      );
+      const { data } = await axios.patch(`/api/v1/users/recover-account`, {
+        email: formData.email,
+      });
 
       if (data.status === "success") {
         showSuccess(data.message, 2000);

@@ -13,8 +13,6 @@ import {
 import { useNavigate, useRouteLoaderData, useLocation } from "react-router"; // Thêm useLocation
 import NotificationCenter from "./NotificationCenter";
 import "./../../assets/navBar.css";
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://127.0.0.1:3000/api/v1";
 
 function getPhotoUrl(fileName) {
   return `/img/users/${fileName}`;
@@ -81,7 +79,7 @@ function UserSection({ user, isMobile }) {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/users/logout`);
+      const res = await fetch(`/api/v1/users/logout`);
       if (!res.ok) throw new Error("Logout failed");
       window.location.href = "/auth";
     } catch (err) {

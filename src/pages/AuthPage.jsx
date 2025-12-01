@@ -108,7 +108,7 @@ const AuthPage = () => {
     try {
       const result = await axios({
         method: "post",
-        url: `${"https://plant-care-system-server.onrender.com/api/v1"}/users/google-auth`,
+        url: `https://plant-care-system-server.onrender.com/api/v1/users/google-auth`,
         data: {
           credential: credentialResponse.credential,
           isSignUp: !isLogin,

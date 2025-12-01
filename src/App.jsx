@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Route,
   createRoutesFromElements,
@@ -19,6 +19,10 @@ import controlsDataLoader from "./loaders/controlsDataLoader";
 import historyDataLoader from "./loaders/historyDataLoader";
 
 function App() {
+  useEffect(() => {
+    console.log(import.meta.env.VITE_API_URL);
+  });
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" loader={rootLoader} id="root">

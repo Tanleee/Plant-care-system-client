@@ -11,6 +11,7 @@ import {
   Filter,
 } from "lucide-react";
 import "./../../assets/notificationCenterStyle.css";
+import getApiUrl from "../../utils/getApiUrl";
 import { useRouteLoaderData } from "react-router";
 
 const NotificationCenter = ({ isOpen, onClose }) => {
@@ -20,17 +21,19 @@ const NotificationCenter = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
 
   const markAsRead = async (id) => {
-    await fetch(`/api/v1/notifications/${id}/read`, {
+    await fetch(getApiUrl(`/api/v1/notifications/${id}/read`), {
       method: "PATCH",
     });
   };
 
   const markAllAsRead = async () => {
-    await fetch(`/api/v1/notifications/read-all`, { method: "PATCH" });
+    await fetch(getApiUrl("/api/v1/notifications/read-all"), {
+      method: "PATCH",
+    });
   };
 
   const deleteNotification = async (id) => {
-    await fetch(`/api/v1/notifications/${id}`, { method: "DELETE" });
+    await fetch(getApiUrl(`/api/v1/notifications/${id}`), { method: "DELETE" });
   };
 
   const getIcon = (type) => {

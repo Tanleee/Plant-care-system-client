@@ -1,322 +1,318 @@
-// src/pages/UserAccountPage.jsx
-import React, { useState, useRef, useEffect } from "react";
-import { useRouteLoaderData } from "react-router";
-import axios from "axios";
+// src/pages/AuthPage.jsx
+import React, { useState } from "react";
+import { useNavigate } from "react-router";
+import { Leaf, ArrowLeft } from "lucide-react";
+import axios from "./../utils/axiosConfig";
 
-import NavBar from "./../components/shared/NavBar";
-import Footer from "./../components/shared/Footer";
-import ShowAlert from "../components/shared/ShowAlert";
-import useAlert from "../hooks/useAlert";
+import getApiUrl from "../utils/getApiUrl";
 
-import AccountSidebar from "../components/account/AccountSidebar";
-import ProfileTab from "../components/account/ProfileTab";
-import PasswordTab from "../components/account/PasswordTab";
-import BookingsTab from "../components/account/BookingsTab";
-import BillingTab from "../components/account/BillingTab";
-import NotificationsTab from "../components/account/NotificationsTab";
-import DeleteAccountModal from "./../components/account/DeleteAccountModal";
+import "./../assets/authPageStyle.css";
+import useAlert from "./../hooks/useAlert";
+import ShowAlert from "./../components/shared/ShowAlert";
+import LoginForm from "./../components/authentication/LoginForm";
+import SignupForm from "./../components/authentication/SignupForm";
+import ForgotPasswordModal from "../components/authentication/ForgotPasswordModal";
+import AccountRecoveryModal from "./../components/authentication/AccountRecoveryModal";
 
-import { getUserPhotoUrl, isGoogleUser } from "../utils/imageHelper";
-
-import "./../assets/userAccountStyle.css";
-
-export default function UserAccountPage() {
-  // const navigate = useNavigate();
-  const userData = useRouteLoaderData("root").user;
-  const { alert, showSuccess, showError, showWarning, hideAlert } = useAlert();
-
-  const fileInputRef = useRef(null);
-
-  const isGoogleAuthUser = isGoogleUser(userData);
-
-  // Tabs
-  const [activeTab, setActiveTab] = useState("profile");
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  // Profile state
-  const [profileData, setProfileData] = useState({
-    name: userData?.name || "",
-    email: userData?.email || "",
-    photo: userData?.photo || "default.jpg",
-    role: userData?.role || "user",
-    isGoogleAuth: userData?.isGoogleAuth || false,
-  });
-
-  const [originalProfileData] = useState({
-    name: userData?.name || "",
-    email: userData?.email || "",
-    photo: userData?.photo || "default.jpg",
-  });
-
-  const [selectedPhoto, setSelectedPhoto] = useState(null);
-  const [photoPreview, setPhotoPreview] = useState(null);
-
-  // Password state
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
+const AuthPage = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+  const [isRecoverModalOpen, setIsRecoverModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
     confirmPassword: "",
+    rememberMe: false,
+    agreeToTerms: false,
   });
 
-  const [showPasswords, setShowPasswords] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
+  const navigate = useNavigate();
+  const { alert, showSuccess, showError, hideAlert } = useAlert();
 
-  const [passwordValidation, setPasswordValidation] = useState({
-    minLength: false,
-    hasUpperCase: false,
-    hasLowerCase: false,
-    hasNumber: false,
-    hasSpecialChar: false,
-  });
-
-  // ✅ Fix: Sử dụng useEffect để update validation
-  useEffect(() => {
-    if (passwordData.newPassword) {
-      const checks = {
-        minLength: passwordData.newPassword.length >= 8,
-        hasUpperCase: /[A-Z]/.test(passwordData.newPassword),
-        hasLowerCase: /[a-z]/.test(passwordData.newPassword),
-        hasNumber: /[0-9]/.test(passwordData.newPassword),
-        hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(passwordData.newPassword),
-      };
-      setPasswordValidation(checks);
-    } else {
-      setPasswordValidation({
-        minLength: false,
-        hasUpperCase: false,
-        hasLowerCase: false,
-        hasNumber: false,
-        hasSpecialChar: false,
-      });
-    }
-  }, [passwordData.newPassword]);
-
-  // ==== HELPER FUNCTIONS ====
-  const hasProfileChanges = () =>
-    profileData.name !== originalProfileData.name ||
-    profileData.email !== originalProfileData.email ||
-    selectedPhoto !== null;
-
-  // ✅ Fix: Đơn giản hóa isPasswordValid
-  const isPasswordValid = () => {
-    if (
-      !passwordData.currentPassword ||
-      !passwordData.newPassword ||
-      !passwordData.confirmPassword
-    ) {
-      return false;
-    }
-
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      return false;
-    }
-
-    return Object.values(passwordValidation).every(Boolean);
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
-  // ==== HANDLE PHOTO ====
-  const handlePhotoSelect = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const validTypes = [
-      "image/jpeg",
-      "image/jpg",
-      "image/png",
-      "image/gif",
-      "image/webp",
-    ];
-    if (!validTypes.includes(file.type)) {
-      showError("Chỉ cho phép ảnh định dạng JPEG, PNG, GIF, WebP");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      showError("Ảnh phải có kích thước nhỏ hơn 5MB");
-      return;
-    }
-
-    setSelectedPhoto(file);
-    const reader = new FileReader();
-    reader.onloadend = () => setPhotoPreview(reader.result);
-    reader.readAsDataURL(file);
-  };
-
-  // ==== SUBMIT HANDLERS ====
-  const handleProfileSubmit = async (e) => {
-    e.preventDefault();
-    if (!hasProfileChanges()) {
-      showWarning("Không có thay đổi nào để lưu");
-      return;
-    }
-
-    setIsUpdating(true);
+  async function handleLogin(email, password) {
+    setIsSending(true);
     try {
-      const formData = new FormData();
-      formData.append("name", profileData.name);
-      formData.append("email", profileData.email);
-      if (selectedPhoto) formData.append("photo", selectedPhoto);
-
-      const { data } = await axios.patch(`/api/v1/users/updateMe`, formData);
-      if (data.status === "success") {
-        showSuccess("Hồ sơ cập nhật thành công!", 36);
-        setTimeout(() => window.location.reload(), 2000);
-      }
-    } catch (err) {
-      showError(err.response?.data?.message || "Cập nhật hồ sơ thất bại");
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  const handlePasswordSubmit = async (e) => {
-    e.preventDefault();
-
-    if (isGoogleAuthUser) {
-      showError("Tài khoản Google không thể thay đổi mật khẩu tại đây");
-      return;
-    }
-
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showError("Mật khẩu không khớp");
-      return;
-    }
-
-    if (!Object.values(passwordValidation).every(Boolean)) {
-      showError("Mật khẩu không đáp ứng yêu cầu bảo mật");
-      return;
-    }
-
-    setIsUpdating(true);
-    try {
-      const { data } = await axios.patch(`/api/v1/users/updateMyPassword`, {
-        passwordCurrent: passwordData.currentPassword,
-        password: passwordData.newPassword,
-        passwordConfirm: passwordData.confirmPassword,
+      // ✅ Dùng relative path
+      const result = await axios.post(getApiUrl("/api/v1/users/login"), {
+        email,
+        password,
       });
 
-      if (data.status === "success") {
-        showSuccess("Mật khẩu đã được thay đổi thành công!", 2000);
-        setPasswordData({
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
-        });
-        setTimeout(() => window.location.reload(), 2000);
+      if (result.data.status === "success") {
+        showSuccess("Đăng nhập thành công", 2000);
+        setTimeout(() => {
+          document.location.href = "/";
+        }, 2000);
       }
     } catch (err) {
-      showError(err.response?.data?.message || "Thay đổi mật khẩu thất bại");
+      if (err.status === 403) {
+        setIsForgotPasswordOpen(true);
+      } else {
+        showError(err.response?.data?.message || "Đăng nhập thất bại", 2000);
+      }
     } finally {
-      setIsUpdating(false);
+      setIsSending(false);
     }
-  };
+  }
 
-  const handleDeleteAccount = async () => {
+  async function handleSignup(name, email, password, passwordConfirm) {
+    setIsSending(true);
     try {
-      const res = await axios.delete(`/api/v1/users/deleteMe`);
-      console.log(typeof res.status);
-      if (!res.status === 204) {
-        throw new Error("Lỗi khi thực hiện xóa tài khoản");
-      }
+      // ✅ Dùng relative path
+      const result = await axios.post(getApiUrl("/api/v1/users/signup"), {
+        name,
+        email,
+        password,
+        passwordConfirm,
+      });
 
-      showSuccess("Xóa tài khoản thành công", 2000);
-      setTimeout(() => (window.location.href = "/"), 2000);
+      if (result.data.status === "success") {
+        showSuccess("Đăng ký thành công", 2000);
+        setTimeout(() => {
+          document.location.href = "/";
+        }, 2000);
+      }
     } catch (err) {
-      showError(err.message, 2000);
+      showError(err.response?.data?.message || "Đăng ký thất bại", 2000);
     } finally {
-      setShowDeleteModal(false);
+      setIsSending(false);
+    }
+  }
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      // ✅ Dùng relative path
+      const result = await axios.post(getApiUrl("/api/v1/users/google-auth"), {
+        credential: credentialResponse.credential,
+        isSignUp: !isLogin,
+      });
+
+      if (result.data.status === "success") {
+        showSuccess(
+          !isLogin ? "Đăng ký thành công" : "Đăng nhập thành công",
+          2000
+        );
+        setTimeout(() => {
+          document.location.href = "/";
+        }, 2000);
+      }
+    } catch (err) {
+      if (err.status === 403) {
+        setFormData({ ...formData, email: err.response.data.message });
+        setIsRecoverModalOpen(true);
+      } else {
+        showError(
+          err.response?.data?.message || "Đăng nhập Google thất bại",
+          2000
+        );
+      }
     }
   };
 
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData((prev) => ({ ...prev, [name]: value }));
+  const handleGoogleError = () => {
+    showError("Đăng nhập Google thất bại", 2000);
+  };
+
+  const handleRecover = async () => {
+    try {
+      // ✅ Dùng relative path
+      const { data } = await axios.patch(
+        getApiUrl("/api/v1/users/recover-account"),
+        {
+          email: formData.email,
+        }
+      );
+
+      if (data.status === "success") {
+        showSuccess(data.message, 2000);
+      }
+    } catch (err) {
+      showError(err.response?.data?.message || "Khôi phục thất bại", 2000);
+    } finally {
+      setIsRecoverModalOpen(false);
+    }
+  };
+
+  const toggleAuthMode = () => {
+    setIsLogin(!isLogin);
+    setFormData({
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      rememberMe: false,
+      agreeToTerms: false,
+    });
+    setShowPassword(false);
+    setShowConfirmPassword(false);
   };
 
   return (
-    <div className="user-account-page">
-      {alert && <ShowAlert {...alert} onClose={hideAlert} />}
+    <>
+      {alert && (
+        <ShowAlert
+          type={alert.type}
+          message={alert.message}
+          duration={alert.duration}
+          onClose={hideAlert}
+        />
+      )}
 
-      <NavBar
-        pageTitle="User Settings"
-        user={{
-          name: profileData.name,
-          avatar: photoPreview || getUserPhotoUrl(profileData.photo),
-        }}
+      <AccountRecoveryModal
+        isOpen={isRecoverModalOpen}
+        onClose={() => setIsRecoverModalOpen(false)}
+        onRecover={handleRecover}
+        userEmail={formData.email}
       />
 
-      <div className="account-container">
-        <div className="account-wrapper">
-          <AccountSidebar
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            profileData={profileData}
-            photoPreview={photoPreview}
-            fileInputRef={fileInputRef}
-            onPhotoClick={() => fileInputRef.current?.click()}
-            onDeleteClick={() => setShowDeleteModal(true)}
-            isGoogleAuth={isGoogleAuthUser}
-          />
+      <div className="auth-page-wrapper">
+        <ForgotPasswordModal
+          isOpen={isForgotPasswordOpen}
+          onClose={() => setIsForgotPasswordOpen(false)}
+        />
 
-          <main className="account-content">
-            {activeTab === "profile" && (
-              <ProfileTab
-                profileData={profileData}
-                onProfileChange={(e) => {
-                  const { name, value } = e.target;
-                  setProfileData((prev) => ({ ...prev, [name]: value }));
-                }}
-                hasChanges={hasProfileChanges()}
-                isUpdating={isUpdating}
-                onSubmit={handleProfileSubmit}
-                isGoogleAuth={isGoogleAuthUser}
+        <div className="auth-card">
+          {/* Info Section */}
+          <div className="info-section">
+            <button onClick={() => navigate("/")} className="back-btn">
+              <ArrowLeft size={20} />
+              <span>Quay lại</span>
+            </button>
+
+            <div className="brand-header">
+              <div className="brand-logo">
+                <div className="logo-icon">
+                  <Leaf size={32} color="white" />
+                </div>
+                <h1 className="brand-title">SmartPlant</h1>
+              </div>
+              <h2 className="brand-subtitle">Chăm sóc cây trồng thông minh</h2>
+              <p className="brand-desc">
+                Giám sát và quản lý vườn cây của bạn từ xa với công nghệ IoT
+                hiện đại
+              </p>
+            </div>
+
+            <div className="feature-list">
+              <div className="feature-item">
+                <div className="feature-icon">
+                  <svg
+                    className="w-5 h-5"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="feature-text">
+                  <h3>Theo dõi realtime</h3>
+                  <p>Giám sát độ ẩm, nhiệt độ, ánh sáng 24/7</p>
+                </div>
+              </div>
+
+              <div className="feature-item">
+                <div className="feature-icon">
+                  <svg
+                    className="w-5 h-5"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="feature-text">
+                  <h3>Tưới tự động</h3>
+                  <p>Hệ thống tưới thông minh theo nhu cầu cây</p>
+                </div>
+              </div>
+
+              <div className="feature-item">
+                <div className="feature-icon">
+                  <svg
+                    className="w-5 h-5"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="feature-text">
+                  <h3>Cảnh báo thông minh</h3>
+                  <p>Nhận thông báo khi cây cần chăm sóc</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Form Section */}
+          <div className="form-section-wrapper">
+            {isLogin ? (
+              <LoginForm
+                formData={formData}
+                onInputChange={handleInputChange}
+                onSubmit={handleLogin}
+                onSwitchToSignup={toggleAuthMode}
+                showPassword={showPassword}
+                onTogglePassword={() => setShowPassword(!showPassword)}
+                isSending={isSending}
+                onForgotPassword={() => setIsForgotPasswordOpen(true)}
+                onGoogleError={handleGoogleError}
+                onGoogleSuccess={handleGoogleSuccess}
+                isLogin={isLogin}
               />
-            )}
-
-            {activeTab === "password" && (
-              <PasswordTab
-                passwordData={passwordData}
-                showPasswords={showPasswords}
-                passwordValidation={passwordValidation}
-                onPasswordChange={handlePasswordChange}
-                togglePasswordVisibility={(field) =>
-                  setShowPasswords((prev) => ({
-                    ...prev,
-                    [field]: !prev[field],
-                  }))
+            ) : (
+              <SignupForm
+                formData={formData}
+                onInputChange={handleInputChange}
+                onSubmit={handleSignup}
+                onSwitchToLogin={toggleAuthMode}
+                showPassword={showPassword}
+                showConfirmPassword={showConfirmPassword}
+                onTogglePassword={() => setShowPassword(!showPassword)}
+                onToggleConfirmPassword={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
                 }
-                isPasswordValid={isPasswordValid()}
-                isUpdating={isUpdating}
-                onSubmit={handlePasswordSubmit}
-                isGoogleAuth={isGoogleAuthUser}
+                isSending={isSending}
+                onGoogleError={handleGoogleError}
+                onGoogleSuccess={handleGoogleSuccess}
+                isLogin={isLogin}
               />
             )}
-
-            {activeTab === "bookings" && <BookingsTab />}
-            {activeTab === "billing" && <BillingTab />}
-            {activeTab === "notifications" && <NotificationsTab />}
-          </main>
+          </div>
         </div>
       </div>
-
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-        style={{ display: "none" }}
-        onChange={handlePhotoSelect}
-      />
-
-      <DeleteAccountModal
-        show={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        onDelete={handleDeleteAccount}
-      />
-
-      <Footer />
-    </div>
+    </>
   );
-}
+};
+
+export default AuthPage;

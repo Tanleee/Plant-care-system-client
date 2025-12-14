@@ -1,6 +1,8 @@
+import getApiUrl from "../utils/getApiUrl";
+
 export default async function dataLoader(loaderUrl) {
   try {
-    const res = await fetch(`/api/v1${loaderUrl}`, {
+    const res = await fetch(getApiUrl(`/api/v1${loaderUrl}`), {
       credentials: "include",
     });
     if (!res.ok) {

@@ -4,6 +4,8 @@ import { useNavigate } from "react-router";
 import { Leaf, ArrowLeft } from "lucide-react";
 import axios from "axios";
 
+import getApiUrl from "../utils/getApiUrl";
+
 import "./../assets/authPageStyle.css";
 import useAlert from "./../hooks/useAlert";
 import ShowAlert from "./../components/shared/ShowAlert";
@@ -46,7 +48,7 @@ const AuthPage = () => {
     try {
       const result = await axios({
         method: "post",
-        url: "/api/v1/users/login",
+        url: getApiUrl("/api/v1/users/login"),
         data: {
           email,
           password,
@@ -76,7 +78,7 @@ const AuthPage = () => {
     try {
       const result = await axios({
         method: "post",
-        url: "/api/v1/users/signup",
+        url: getApiUrl("/api/v1/users/signup"),
         data: {
           name,
           email,
@@ -104,7 +106,7 @@ const AuthPage = () => {
     try {
       const result = await axios({
         method: "post",
-        url: "/api/v1/users/google-auth",
+        url: getApiUrl("/api/v1/users/google-auth"),
         data: {
           credential: credentialResponse.credential,
           isSignUp: !isLogin,
@@ -137,9 +139,12 @@ const AuthPage = () => {
 
   const handleRecover = async () => {
     try {
-      const { data } = await axios.patch("/api/v1/users/recover-account", {
-        email: formData.email,
-      });
+      const { data } = await axios.patch(
+        getApiUrl("/api/v1/users/recover-account"),
+        {
+          email: formData.email,
+        }
+      );
 
       if (data.status === "success") {
         showSuccess(data.message, 2000);

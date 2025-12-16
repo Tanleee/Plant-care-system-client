@@ -81,8 +81,8 @@ function UserSection({ user, isMobile }) {
   const handleLogout = async () => {
     try {
       const res = await fetch(getApiUrl("/api/v1/users/logout"), {
-        method: "POST", // ✅ Nên dùng POST cho logout
-        credentials: "include", // ✅ BẮT BUỘC để gửi/nhận cookies
+        method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },

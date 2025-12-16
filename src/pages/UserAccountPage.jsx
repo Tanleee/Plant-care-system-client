@@ -162,7 +162,8 @@ export default function UserAccountPage() {
 
       const { data } = await axios.patch(
         getApiUrl("/api/v1/users/updateMe"),
-        formData
+        formData,
+        { withCredentials: true }
       );
       if (data.status === "success") {
         showSuccess("Hồ sơ cập nhật thành công!", 36);
@@ -201,6 +202,9 @@ export default function UserAccountPage() {
           passwordCurrent: passwordData.currentPassword,
           password: passwordData.newPassword,
           passwordConfirm: passwordData.confirmPassword,
+        },
+        {
+          withCredentials: true,
         }
       );
 
@@ -222,8 +226,10 @@ export default function UserAccountPage() {
 
   const handleDeleteAccount = async () => {
     try {
-      const res = await axios.delete(getApiUrl("/api/v1/users/deleteMe"));
-      console.log(typeof res.status);
+      const res = await axios.delete(getApiUrl("/api/v1/users/deleteMe"), {
+        withCredentials: true,
+      });
+
       if (!res.status === 204) {
         throw new Error("Lỗi khi thực hiện xóa tài khoản");
       }

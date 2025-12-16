@@ -90,7 +90,8 @@ function UserSection({ user, isMobile }) {
 
       if (!res.ok) throw new Error("Logout failed");
 
-      window.location.href = "/auth";
+      // window.location.href = "/auth";
+      navigate("/auth", { replace: true });
     } catch (err) {
       console.error("Logout error:", err.message);
     }

@@ -80,8 +80,16 @@ function UserSection({ user, isMobile }) {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch(getApiUrl("/api/v1/users/logout"));
+      const res = await fetch(getApiUrl("/api/v1/users/logout"), {
+        method: "POST", // ✅ Nên dùng POST cho logout
+        credentials: "include", // ✅ BẮT BUỘC để gửi/nhận cookies
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
       if (!res.ok) throw new Error("Logout failed");
+
       window.location.href = "/auth";
     } catch (err) {
       console.error("Logout error:", err.message);

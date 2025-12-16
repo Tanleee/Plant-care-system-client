@@ -14,7 +14,6 @@ export default async function dataLoader(loaderUrl) {
     return data.data.data;
     /*eslint-disable*/
   } catch (err) {
-    // console.log(err.message);
     return null;
   }
 }

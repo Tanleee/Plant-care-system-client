@@ -10,7 +10,12 @@ import {
   Leaf,
   Bell,
 } from "lucide-react";
-import { useNavigate, useRouteLoaderData, useLocation } from "react-router";
+import {
+  useNavigate,
+  useRouteLoaderData,
+  useLocation,
+  useRevalidator,
+} from "react-router";
 import NotificationCenter from "./NotificationCenter";
 import getApiUrl from "./../../utils/getApiUrl";
 import "./../../assets/navBar.css";
@@ -76,7 +81,9 @@ function UserSection({ user, isMobile }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const { notifications } = useRouteLoaderData("root");
   const unreadCount = notifications?.filter((n) => !n.isRead).length || 0;
+
   const navigate = useNavigate();
+  const revalidator = useRevalidator();
 
   const handleLogout = async () => {
     try {
@@ -90,8 +97,11 @@ function UserSection({ user, isMobile }) {
 
       if (!res.ok) throw new Error("Logout failed");
 
-      // window.location.href = "/auth";
-      navigate("/auth", { replace: true });
+      revalidator.revalidate();
+
+      setTimeout(() => {
+        navigate("/auth", { replace: true });
+      }, 100);
     } catch (err) {
       console.error("Logout error:", err.message);
     }

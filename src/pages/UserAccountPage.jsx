@@ -22,7 +22,7 @@ import "./../assets/userAccountStyle.css";
 
 export default function UserAccountPage() {
   // const navigate = useNavigate();
-  const userData = useRouteLoaderData("root");
+  const userData = useRouteLoaderData("root").user;
   const { alert, showSuccess, showError, showWarning, hideAlert } = useAlert();
 
   const fileInputRef = useRef(null);

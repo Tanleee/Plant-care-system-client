@@ -1,6 +1,6 @@
 import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
-// import FacebookLogin from "./FacebookLogin";
+import FacebookLogin from "./FacebookLogin";
 
 function SocialAuth({ onGoogleSuccess, onGoogleError, isLogin }) {
   return (
@@ -21,7 +21,7 @@ function SocialAuth({ onGoogleSuccess, onGoogleError, isLogin }) {
           theme="outline"
           size="large"
         />
-        {/* <FacebookLogin isSignUp={!isLogin} /> */}
+        <FacebookLogin isSignUp={!isLogin} />
       </div>
     </>
   );

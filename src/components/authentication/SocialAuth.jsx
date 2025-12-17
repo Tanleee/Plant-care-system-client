@@ -8,7 +8,7 @@ function SocialAuth({ onGoogleSuccess, onGoogleError, isLogin }) {
       <div className="divider">
         <div className="divider-line left"></div>
         <div className="divider-line right"></div>
-        <span className="divider-text">HOẶC TIẾP TỤC VỚI</span> {/* Đã dịch */}
+        <span className="divider-text">HOẶC TIẾP TỤC VỚI</span>
       </div>
 
       {/* Social Buttons */}

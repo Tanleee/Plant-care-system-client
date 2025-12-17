@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useLoaderData, useRevalidator } from "react-router-dom";
 import {
   Droplets,
   Sun,
@@ -18,29 +19,44 @@ import NavBar from "../components/shared/NavBar";
 import Footer from "../components/shared/Footer";
 
 const HomePage = () => {
-  const [sensorData, setSensorData] = useState({
-    temperature: 28.5,
-    humidity: 65,
-    soilMoisture: 47,
-    light: 1342,
-    lastUpdate: new Date(),
-    isOnline: true,
-  });
+  // Lấy dữ liệu từ loader
+  const initialData = useLoaderData();
+  const revalidator = useRevalidator();
 
+  // Tính toán sensorData trực tiếp từ initialData - không cần state
+  const sensorData = React.useMemo(() => {
+    if (initialData) {
+      return {
+        temperature: initialData.temperature || 0,
+        humidity: initialData.humidity || 0,
+        soilMoisture: initialData.soilMoisture || 0,
+        light: initialData.light || 0,
+        lastUpdate: initialData.timestamp
+          ? new Date(initialData.timestamp)
+          : new Date(),
+        isOnline: true,
+      };
+    }
+
+    // Fallback khi không có dữ liệu
+    return {
+      temperature: 0,
+      humidity: 0,
+      soilMoisture: 0,
+      light: 0,
+      lastUpdate: new Date(),
+      isOnline: false,
+    };
+  }, [initialData]);
+
+  // Auto reload mỗi 5 phút
   useEffect(() => {
     const interval = setInterval(() => {
-      setSensorData((prev) => ({
-        ...prev,
-        temperature: parseFloat((25 + Math.random() * 8).toFixed(1)),
-        humidity: parseInt(60 + Math.random() * 20),
-        soilMoisture: parseInt(40 + Math.random() * 25),
-        light: parseInt(1000 + Math.random() * 1500),
-        lastUpdate: new Date(),
-      }));
-    }, 3000);
+      revalidator.revalidate();
+    }, 5 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [revalidator]);
 
   return (
     <>

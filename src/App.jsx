@@ -17,6 +17,7 @@ import rootLoader from "./loaders/rootLoader";
 import chartDataLoader from "./loaders/chartsDataLoader";
 import controlsDataLoader from "./loaders/controlsDataLoader";
 import historyDataLoader from "./loaders/historyDataLoader";
+import sensorDataLoader from "./loaders//sensorDataLoader";
 
 function App() {
   useEffect(() => {
@@ -26,7 +27,7 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" loader={rootLoader} id="root">
-        <Route index element={<HomePage />} />
+        <Route index element={<HomePage />} loader={sensorDataLoader} />
         <Route path="auth" element={<AuthPage />} />
         <Route path="user" element={<UserAccountPage />} />
         <Route

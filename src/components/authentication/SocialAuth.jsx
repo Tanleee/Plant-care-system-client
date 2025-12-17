@@ -21,7 +21,7 @@ function SocialAuth({ onGoogleSuccess, onGoogleError, isLogin }) {
           theme="outline"
           size="large"
         />
-        <FacebookLogin isSignUp={!isLogin} />
+        {/* <FacebookLogin isSignUp={!isLogin} /> */}
       </div>
     </>
   );

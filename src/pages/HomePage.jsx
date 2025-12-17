@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useLoaderData, useRevalidator } from "react-router-dom";
+import { useLoaderData, useRevalidator } from "react-router";
 import {
   Droplets,
   Sun,

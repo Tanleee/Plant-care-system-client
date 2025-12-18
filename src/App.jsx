@@ -12,6 +12,7 @@ import ChartsPage from "./pages/ChartsPage";
 import ControlPage from "./pages/ControlsPage";
 import HistoryPage from "./pages/HistoryPage";
 import UserAccountPage from "./pages/UserAccountPage";
+import ProtectedRoute from "./components/shared/ProtectedRoute";
 
 import rootLoader from "./loaders/rootLoader";
 import chartDataLoader from "./loaders/chartsDataLoader";
@@ -32,17 +33,29 @@ function App() {
         <Route path="user" element={<UserAccountPage />} />
         <Route
           path="charts"
-          element={<ChartsPage />}
+          element={
+            <ProtectedRoute>
+              <ChartsPage />
+            </ProtectedRoute>
+          }
           loader={chartDataLoader}
         />
         <Route
           path="controls"
-          element={<ControlPage />}
+          element={
+            <ProtectedRoute>
+              <ControlPage />
+            </ProtectedRoute>
+          }
           loader={controlsDataLoader}
         />
         <Route
           path="history"
-          element={<HistoryPage />}
+          element={
+            <ProtectedRoute>
+              <HistoryPage />
+            </ProtectedRoute>
+          }
           loader={historyDataLoader}
         />
       </Route>

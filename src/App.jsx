@@ -30,7 +30,14 @@ function App() {
       <Route path="/" loader={rootLoader} id="root">
         <Route index element={<HomePage />} loader={sensorDataLoader} />
         <Route path="auth" element={<AuthPage />} />
-        <Route path="user" element={<UserAccountPage />} />
+        <Route
+          path="user"
+          element={
+            <ProtectedRoute>
+              <UserAccountPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="charts"
           element={

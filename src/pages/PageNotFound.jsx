@@ -36,7 +36,7 @@ const PageNotFound = () => {
           </p>
 
           <div className="suggestion-cards">
-            <div className="suggestion-card">
+            <div className="suggestion-card" onClick={() => navigate("/")}>
               <div
                 className="suggestion-icon"
                 style={{ background: "#D1FAE5" }}
@@ -46,7 +46,10 @@ const PageNotFound = () => {
               <h3>Dashboard</h3>
               <p>Xem tổng quan hệ thống</p>
             </div>
-            <div className="suggestion-card">
+            <div
+              className="suggestion-card"
+              onClick={() => navigate("/charts")}
+            >
               <div
                 className="suggestion-icon"
                 style={{ background: "#DBEAFE" }}
@@ -56,7 +59,10 @@ const PageNotFound = () => {
               <h3>Biểu đồ</h3>
               <p>Theo dõi số liệu</p>
             </div>
-            <div className="suggestion-card">
+            <div
+              className="suggestion-card"
+              onClick={() => navigate("/controls")}
+            >
               <div
                 className="suggestion-icon"
                 style={{ background: "#FEF3C7" }}

@@ -12,6 +12,7 @@ import ChartsPage from "./pages/ChartsPage";
 import ControlPage from "./pages/ControlsPage";
 import HistoryPage from "./pages/HistoryPage";
 import UserAccountPage from "./pages/UserAccountPage";
+import PageNotFound from "./pages/PageNotFound";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
 
 import rootLoader from "./loaders/rootLoader";
@@ -65,6 +66,7 @@ function App() {
           }
           loader={historyDataLoader}
         />
+        <Route path="*" element={<PageNotFound />} />
       </Route>
     )
   );

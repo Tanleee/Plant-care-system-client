@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import {
   Activity,
-  TrendingUp,
-  Settings,
-  History,
   LogOut,
   Menu,
   X,
   Leaf,
-  Bell,
+  AlarmClock,
+  Timer,
+  Earth,
+  Hourglass,
 } from "lucide-react";
 import {
   useNavigate,
@@ -41,13 +41,19 @@ function Brand() {
 // Navigation Menu Component
 function NavMenu({ onMobileClose }) {
   const navigate = useNavigate();
-  const location = useLocation(); // Lấy location hiện tại
+  const location = useLocation();
 
   const menuItems = [
     { id: "dashboard", label: "Dashboard", link: "/", icon: Activity },
-    { id: "charts", label: "Biểu đồ", link: "/charts", icon: TrendingUp },
-    { id: "control", label: "Điều khiển", link: "/controls", icon: Settings },
-    { id: "history", label: "Lịch sử", link: "/history", icon: History },
+    { id: "alarm", label: "Báo thức", link: "/alarm", icon: AlarmClock },
+    { id: "stopwatch", label: "Bấm giờ", link: "/stopwatch", icon: Timer },
+    { id: "timer", label: "Hẹn giờ", link: "/timer", icon: Hourglass },
+    {
+      id: "worldclock",
+      label: "Giờ thế giới",
+      link: "/worldclock",
+      icon: Earth,
+    },
   ];
 
   return (
@@ -189,7 +195,6 @@ function UserSection({ user, isMobile }) {
     </div>
   );
 }
-
 
 // Auth Buttons Component (khi chưa đăng nhập)
 function AuthButtons({ isMobile }) {

@@ -1,0 +1,257 @@
+.timer-page-container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.timer-content-wrapper {
+  background: white;
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 40px rgba(5, 150, 105, 0.15);
+}
+
+.timer-header-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.timer-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+.timer-icon-svg {
+  width: 40px;
+  height: 40px;
+  color: white;
+}
+
+.timer-page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #065f46;
+  margin: 0;
+}
+
+.timer-inputs {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.timer-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timer-input-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #059669;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.timer-input-field {
+  width: 100px;
+  padding: 1rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #065f46;
+  text-align: center;
+  background: #f0fdf4;
+  border: 2px solid #10b981;
+  border-radius: 12px;
+  font-family: "Courier New", monospace;
+}
+
+.timer-input-field:focus {
+  outline: none;
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.timer-input-separator {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #10b981;
+  margin-bottom: 0.5rem;
+}
+
+.timer-button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.timer-btn {
+  padding: 1rem 2.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+}
+
+.timer-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.timer-btn-primary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.timer-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+.timer-btn-stop {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.timer-btn-secondary {
+  background: white;
+  color: #059669;
+  border: 2px solid #059669;
+}
+
+.timer-btn-secondary:hover:not(:disabled) {
+  background: #f0fdf4;
+  transform: translateY(-2px);
+}
+
+.timer-btn-reset {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.timer-btn-reset:hover {
+  background: #e5e7eb;
+  transform: translateY(-2px);
+}
+
+.timer-quick-timers {
+  background: #f9fafb;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+
+.timer-quick-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #065f46;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.timer-quick-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.75rem;
+}
+
+.timer-quick-btn {
+  padding: 0.875rem 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #059669;
+  background: white;
+  border: 2px solid #a7f3d0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.timer-quick-btn:hover {
+  background: #d1f4e0;
+  border-color: #10b981;
+  transform: scale(1.05);
+}
+
+.timer-display-box {
+  background: linear-gradient(135deg, #d1f4e0 0%, #a7f3d0 100%);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.timer-progress-ring {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  margin: 0 auto;
+}
+
+.timer-progress-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(0deg);
+}
+
+.timer-time-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  font-weight: 700;
+  color: #065f46;
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 640px) {
+  .timer-content-wrapper {
+    padding: 1.5rem;
+  }
+
+  .timer-inputs {
+    flex-wrap: wrap;
+  }
+
+  .timer-input-field {
+    width: 80px;
+    font-size: 1.5rem;
+  }
+
+  .timer-button-group {
+    flex-direction: column;
+  }
+
+  .timer-btn {
+    width: 100%;
+  }
+
+  .timer-progress-ring {
+    width: 220px;
+    height: 220px;
+  }
+
+  .timer-time-display {
+    font-size: 2.25rem;
+  }
+
+  .timer-quick-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,176 @@
+.stopwatch-page-container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.stopwatch-content-wrapper {
+  background: white;
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 40px rgba(5, 150, 105, 0.15);
+}
+
+.stopwatch-header-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.stopwatch-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+.stopwatch-icon-svg {
+  width: 40px;
+  height: 40px;
+  color: white;
+}
+
+.stopwatch-page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #065f46;
+  margin: 0;
+}
+
+.stopwatch-display-box {
+  background: linear-gradient(135deg, #d1f4e0 0%, #a7f3d0 100%);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.stopwatch-time-display {
+  font-size: 4rem;
+  font-weight: 700;
+  color: #065f46;
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.1em;
+}
+
+.stopwatch-button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.stopwatch-btn {
+  padding: 1rem 2.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+}
+
+.stopwatch-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stopwatch-btn-primary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.stopwatch-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+.stopwatch-btn-stop {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.stopwatch-btn-secondary {
+  background: white;
+  color: #059669;
+  border: 2px solid #059669;
+}
+
+.stopwatch-btn-secondary:hover:not(:disabled) {
+  background: #f0fdf4;
+  transform: translateY(-2px);
+}
+
+.stopwatch-btn-reset {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.stopwatch-btn-reset:hover {
+  background: #e5e7eb;
+  transform: translateY(-2px);
+}
+
+.stopwatch-laps-container {
+  background: #f9fafb;
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.stopwatch-laps-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #065f46;
+  margin: 0 0 1rem 0;
+}
+
+.stopwatch-laps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.stopwatch-lap-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border-left: 4px solid #10b981;
+}
+
+.stopwatch-lap-number {
+  font-weight: 600;
+  color: #059669;
+}
+
+.stopwatch-lap-time {
+  font-family: "Courier New", monospace;
+  font-weight: 600;
+  color: #065f46;
+  font-size: 1.125rem;
+}
+
+@media (max-width: 640px) {
+  .stopwatch-content-wrapper {
+    padding: 1.5rem;
+  }
+
+  .stopwatch-time-display {
+    font-size: 2.5rem;
+  }
+
+  .stopwatch-button-group {
+    flex-direction: column;
+  }
+
+  .stopwatch-btn {
+    width: 100%;
+  }
+}

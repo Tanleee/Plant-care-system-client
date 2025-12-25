@@ -8,9 +8,10 @@ import {
 
 import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
-import ChartsPage from "./pages/ChartsPage";
-import ControlPage from "./pages/ControlsPage";
-import HistoryPage from "./pages/HistoryPage";
+import AlarmPage from "./pages/AlarmPage";
+import StopWatchPage from "./pages/StopWatchPage";
+import TimerPage from "./pages/TimerPage";
+import WordlClockPage from "./pages/WordlClockPage";
 import UserAccountPage from "./pages/UserAccountPage";
 import PageNotFound from "./pages/PageNotFound";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
@@ -28,39 +29,19 @@ function App() {
       <Route path="/" loader={userLoader} id="root">
         <Route index element={<HomePage />} />
         <Route path="auth" element={<AuthPage />} />
+        <Route path="user" element={<UserAccountPage />} />
         <Route
-          path="user"
-          element={ 
-            
-              <UserAccountPage />
-          
-          }
-        />
-        <Route
-          path="charts"
+          path="alarm"
           element={
-
-              <ChartsPage />
-              
+            <ProtectedRoute>
+              <AlarmPage />
+            </ProtectedRoute>
           }
           loader={alarmLoader}
         />
-        <Route
-          path="controls"
-          element={
-         
-              <ControlPage />
-            
-          }
-        />
-        <Route
-          path="history"
-          element={
-           
-              <HistoryPage />
-           
-          }
-        />
+        <Route path="stopwatch" element={<StopWatchPage />} />
+        <Route path="timer" element={<TimerPage />} />
+        <Route path="worldclock" element={<WordlClockPage />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     )

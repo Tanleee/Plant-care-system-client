@@ -16,10 +16,7 @@ import PageNotFound from "./pages/PageNotFound";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
 
 import userLoader from "./loaders/userLoader";
-import chartDataLoader from "./loaders/chartsDataLoader";
-import controlsDataLoader from "./loaders/controlsDataLoader";
-import historyDataLoader from "./loaders/historyDataLoader";
-import sensorDataLoader from "./loaders//sensorDataLoader";
+import alarmLoader from "./loaders/alarmLoader";
 
 function App() {
   useEffect(() => {

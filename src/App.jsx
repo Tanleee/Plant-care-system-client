@@ -15,7 +15,7 @@ import UserAccountPage from "./pages/UserAccountPage";
 import PageNotFound from "./pages/PageNotFound";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
 
-import rootLoader from "./loaders/rootLoader";
+import userLoader from "./loaders/userLoader";
 import chartDataLoader from "./loaders/chartsDataLoader";
 import controlsDataLoader from "./loaders/controlsDataLoader";
 import historyDataLoader from "./loaders/historyDataLoader";
@@ -28,8 +28,8 @@ function App() {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" loader={rootLoader} id="root">
-        <Route index element={<HomePage />} loader={sensorDataLoader} />
+      <Route path="/" loader={userLoader} id="root">
+        <Route index element={<HomePage />} />
         <Route path="auth" element={<AuthPage />} />
         <Route
           path="user"
@@ -46,7 +46,6 @@ function App() {
               <ChartsPage />
            
           }
-          loader={chartDataLoader}
         />
         <Route
           path="controls"
@@ -55,7 +54,6 @@ function App() {
               <ControlPage />
             
           }
-          loader={controlsDataLoader}
         />
         <Route
           path="history"
@@ -64,7 +62,6 @@ function App() {
               <HistoryPage />
            
           }
-          loader={historyDataLoader}
         />
         <Route path="*" element={<PageNotFound />} />
       </Route>

@@ -29,7 +29,9 @@ const AlarmPage = () => {
 
   const fetchAlarms = async () => {
     try {
-      const response = await fetch(getApiUrl("/api/v1/alarm"));
+      const response = await fetch(getApiUrl("/api/v1/alarm"), {
+        credentials: "include",
+      });
       const data = await response.json();
       if (data.status === "success") {
         setAlarms(data.data.data);
@@ -54,6 +56,7 @@ const AlarmPage = () => {
           enable: true,
           repeat: selectedDays,
         }),
+        credentials: "include",
       });
       const data = await response.json();
       if (data.status === "success") {
@@ -75,6 +78,7 @@ const AlarmPage = () => {
         body: JSON.stringify({
           enable: !currentState,
         }),
+        credentials: "include",
       });
       const data = await response.json();
       if (data.status === "success") {
@@ -93,6 +97,7 @@ const AlarmPage = () => {
     try {
       await fetch(getApiUrl(`/api/v1/alarm/${id}`), {
         method: "DELETE",
+        credentials: "include",
       });
       setAlarms(alarms.filter((alarm) => alarm._id !== id));
     } catch (error) {

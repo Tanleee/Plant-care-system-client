@@ -18,6 +18,8 @@ const AlarmPage = () => {
     false,
   ]);
   const [loading, setLoading] = useState(true);
+  const [hourScrollStart, setHourScrollStart] = useState(null);
+  const [minScrollStart, setMinScrollStart] = useState(null);
 
   const dayLabels = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 
@@ -114,6 +116,62 @@ const AlarmPage = () => {
     const newDays = [...selectedDays];
     newDays[index] = !newDays[index];
     setSelectedDays(newDays);
+  };
+
+  const handleHourScroll = (e) => {
+    e.preventDefault();
+    const delta = e.deltaY;
+    if (delta > 0) {
+      setSelectedHour((prev) => (prev + 1) % 24);
+    } else {
+      setSelectedHour((prev) => (prev - 1 + 24) % 24);
+    }
+  };
+
+  const handleMinScroll = (e) => {
+    e.preventDefault();
+    const delta = e.deltaY;
+    if (delta > 0) {
+      setSelectedMin((prev) => (prev + 1) % 60);
+    } else {
+      setSelectedMin((prev) => (prev - 1 + 60) % 60);
+    }
+  };
+
+  const handleHourTouch = (e) => {
+    if (e.type === "touchstart") {
+      setHourScrollStart(e.touches[0].clientY);
+    } else if (e.type === "touchmove" && hourScrollStart !== null) {
+      const delta = hourScrollStart - e.touches[0].clientY;
+      if (Math.abs(delta) > 20) {
+        if (delta > 0) {
+          setSelectedHour((prev) => (prev + 1) % 24);
+        } else {
+          setSelectedHour((prev) => (prev - 1 + 24) % 24);
+        }
+        setHourScrollStart(e.touches[0].clientY);
+      }
+    } else if (e.type === "touchend") {
+      setHourScrollStart(null);
+    }
+  };
+
+  const handleMinTouch = (e) => {
+    if (e.type === "touchstart") {
+      setMinScrollStart(e.touches[0].clientY);
+    } else if (e.type === "touchmove" && minScrollStart !== null) {
+      const delta = minScrollStart - e.touches[0].clientY;
+      if (Math.abs(delta) > 20) {
+        if (delta > 0) {
+          setSelectedMin((prev) => (prev + 1) % 60);
+        } else {
+          setSelectedMin((prev) => (prev - 1 + 60) % 60);
+        }
+        setMinScrollStart(e.touches[0].clientY);
+      }
+    } else if (e.type === "touchend") {
+      setMinScrollStart(null);
+    }
   };
 
   const getRepeatText = (repeat) => {
@@ -227,19 +285,31 @@ const AlarmPage = () => {
             <h2 className="alarmpage-modal-title">Đặt báo thức</h2>
 
             <div className="alarmpage-time-picker">
-              <div className="alarmpage-time-column">
+              <div
+                className="alarmpage-time-column"
+                onWheel={handleHourScroll}
+                onTouchStart={handleHourTouch}
+                onTouchMove={handleHourTouch}
+                onTouchEnd={handleHourTouch}
+              >
                 <div className="alarmpage-time-value">
-                  {String(selectedHour - 1).padStart(2, "0")}
+                  {String((selectedHour - 1 + 24) % 24).padStart(2, "0")}
                 </div>
                 <div className="alarmpage-time-selected">
                   {String(selectedHour).padStart(2, "0")}
                 </div>
                 <div className="alarmpage-time-value">
-                  {String(selectedHour + 1).padStart(2, "0")}
+                  {String((selectedHour + 1) % 24).padStart(2, "0")}
                 </div>
               </div>
               <div className="alarmpage-time-separator">:</div>
-              <div className="alarmpage-time-column">
+              <div
+                className="alarmpage-time-column"
+                onWheel={handleMinScroll}
+                onTouchStart={handleMinTouch}
+                onTouchMove={handleMinTouch}
+                onTouchEnd={handleMinTouch}
+              >
                 <div className="alarmpage-time-value">
                   {String((selectedMin - 1 + 60) % 60).padStart(2, "0")}
                 </div>
@@ -249,31 +319,6 @@ const AlarmPage = () => {
                 <div className="alarmpage-time-value">
                   {String((selectedMin + 1) % 60).padStart(2, "0")}
                 </div>
-              </div>
-            </div>
-
-            <div className="alarmpage-time-controls">
-              <div className="alarmpage-time-control-group">
-                <button
-                  onClick={() => setSelectedHour((selectedHour - 1 + 24) % 24)}
-                >
-                  ▲
-                </button>
-                <button
-                  onClick={() => setSelectedHour((selectedHour + 1) % 24)}
-                >
-                  ▼
-                </button>
-              </div>
-              <div className="alarmpage-time-control-group">
-                <button
-                  onClick={() => setSelectedMin((selectedMin - 1 + 60) % 60)}
-                >
-                  ▲
-                </button>
-                <button onClick={() => setSelectedMin((selectedMin + 1) % 60)}>
-                  ▼
-                </button>
               </div>
             </div>
 

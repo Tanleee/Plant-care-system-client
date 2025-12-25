@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router";
 import { Bell, Plus, Trash2, Clock } from "lucide-react";
 import "./../assets/chartsPageStyle.css";
 

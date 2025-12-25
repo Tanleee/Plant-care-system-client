@@ -119,7 +119,6 @@ const AlarmPage = () => {
   };
 
   const handleHourScroll = (e) => {
-    e.preventDefault();
     const delta = e.deltaY;
     if (delta > 0) {
       setSelectedHour((prev) => (prev + 1) % 24);
@@ -129,7 +128,6 @@ const AlarmPage = () => {
   };
 
   const handleMinScroll = (e) => {
-    e.preventDefault();
     const delta = e.deltaY;
     if (delta > 0) {
       setSelectedMin((prev) => (prev + 1) % 60);

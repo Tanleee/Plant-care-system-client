@@ -69,7 +69,7 @@ export default function Footer() {
               <div className="footer-logo">
                 <Leaf size={32} color="green" />
               </div>
-              <span className="footer-brand-name">SmartPlant</span>
+              <span className="footer-brand-name">Smart Clock</span>
             </div>
             <p className="footer-brand-description">
               Chăm sóc cây trồng thông minh, giám sát và quản lý vườn cây của
@@ -91,7 +91,7 @@ export default function Footer() {
         {/* Copyright */}
         <div className="footer-copyright">
           <p className="footer-copyright-text">
-            © 2025 SmartPlant. Tất cả các quyền được bảo lưu.
+            © 2025 Smart Clock Tất cả các quyền được bảo lưu.
           </p>
         </div>
       </div>

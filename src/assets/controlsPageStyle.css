@@ -1,493 +1,391 @@
-.control-page {
+/* src/assets/controlsPageStyle.css */
+
+/* --- LAYOUT CHUNG --- */
+.controls-page {
   min-height: 100vh;
+  /* Giữ gradient nền giống các trang khác cho đồng bộ */
   background: linear-gradient(to bottom right, #f0fdf4, #dbeafe);
   padding: 24px;
+  font-family: 'Inter', sans-serif;
 }
 
-.control-header {
-  background-color: white;
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.controls-container {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.control-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #1f2937;
-  margin-bottom: 8px;
-}
-
-.control-title-icon {
-  display: inline;
-  margin-right: 12px;
-  vertical-align: middle;
-  color: #10b981;
-}
-
-.control-subtitle {
-  color: #6b7280;
-  margin: 0;
-}
-
-.control-card {
-  background-color: white;
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.control-section-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #1f2937;
-  margin-bottom: 16px;
-}
-
-.control-mode-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-}
-
-.control-mode-btn {
-  padding: 16px;
-  border-radius: 12px;
-  border: 2px solid #e5e7eb;
-  background-color: white;
-  cursor: pointer;
-  transition: all 0.3s;
-  text-align: left;
-}
-
-.control-mode-btn:hover {
-  border-color: #10b981;
-  background-color: #f0fdf4;
-}
-
-.control-mode-btn-active {
-  border-color: #10b981;
-  background-color: #ecfdf5;
-}
-
-.control-mode-btn-header {
+/* --- HEADER --- */
+.world-header {
+  background: white;
+  border-radius: 20px;
+  padding: 24px 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.control-mode-btn-label {
-  font-weight: bold;
-}
-
-.control-mode-btn-desc {
-  font-size: 13px;
-  color: #6b7280;
-  margin: 0;
-}
-
-.control-devices-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  flex-wrap: wrap;
   gap: 20px;
 }
 
-.control-device-card {
-  background-color: white;
-  border-radius: 16px;
-  padding: 24px;
+.header-title h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-title p {
+  margin: 5px 0 0 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+/* Thanh tìm kiếm/thêm thành phố */
+.add-city-group {
+  display: flex;
+  gap: 10px;
+  background: #f9fafb;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  align-items: center;
+}
+
+.city-select {
+  border: none;
+  background: transparent;
+  padding: 10px;
+  font-size: 1rem;
+  color: #374151;
+  outline: none;
+  min-width: 220px;
   cursor: pointer;
-  border: 2px solid #e5e7eb;
-  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.btn-add-city {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-add-city:hover { 
+  background: #059669; 
+  transform: translateY(-1px);
+}
+
+/* --- GRID ĐỒNG HỒ --- */
+.clock-grid {
+  display: grid;
+  /* Tự động chia cột, tối thiểu 280px mỗi thẻ */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* --- THẺ ĐỒNG HỒ (CARD) --- */
+.clock-card {
+  background: white;
+  border-radius: 24px;
+  padding: 30px 20px;
   position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid white;
   overflow: hidden;
 }
 
-.control-device-card:hover {
-  transform: translateY(-2px);
+.clock-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
+  border-color: #d1fae5;
+  z-index: 10;
 }
 
-.control-device-card-disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.control-device-card-on {
-  /* Additional styles when device is on */
-}
-
-.control-device-gradient {
+/* Nút xóa đồng hồ (Hiện khi hover) */
+.btn-remove-clock {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-}
-
-.control-device-content {
-  position: relative;
-  z-index: 1;
-}
-
-.control-device-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.control-device-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 16px;
+  top: 15px;
+  right: 15px;
+  background: #fee2e2;
+  border: none;
+  color: #ef4444;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0; /* Ẩn mặc định */
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
-  transition: transform 0.3s;
+  transform: scale(0.8);
 }
 
-.control-device-card:hover .control-device-icon {
-  transform: scale(1.05);
+.clock-card:hover .btn-remove-clock { 
+  opacity: 1; 
+  transform: scale(1);
+}
+.btn-remove-clock:hover { 
+  background: #ef4444; 
+  color: white; 
 }
 
-.control-device-name {
-  font-size: 18px;
-  font-weight: bold;
-  color: #1f2937;
-  margin-bottom: 8px;
+/* --- MẶT ĐỒNG HỒ ANALOG (CSS THUẦN) --- */
+.analog-face {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  position: relative;
+  margin-bottom: 25px;
+  /* Bóng đổ bên trong tạo chiều sâu */
+  box-shadow: inset 0 5px 15px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.05);
+  border: 4px solid white;
 }
 
-.control-device-status {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 0;
+/* Trục giữa đồng hồ */
+.analog-face::after { 
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #374151;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  border: 2px solid white;
 }
 
-.control-device-mode-badge {
-  margin-top: 12px;
-  padding: 6px 12px;
-  background-color: #fef3c7;
-  color: #92400e;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
+/* Các vạch số (Trang trí) */
+.analog-face::before {
+  content: '';
+  position: absolute;
+  top: 10px; left: 50%;
+  width: 2px; height: 10px;
+  background: #cbd5e1;
+  transform: translateX(-50%);
+  box-shadow: 0 106px #cbd5e1; /* Vạch đối diện (6h) */
 }
 
-.control-auto-settings {
-  display: grid;
-  gap: 20px;
+/* Kim giờ, phút, giây */
+.hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: bottom center; /* Xoay từ tâm dưới */
+  border-radius: 4px;
+  z-index: 5;
+  transition: transform 0.05s linear; /* Chuyển động mượt */
 }
 
-.control-auto-setting-item {
-  padding: 16px;
-  background-color: #f9fafb;
-  border-radius: 12px;
+.hand.hour {
+  width: 6px;
+  height: 35px;
+  background: #1f2937;
+  margin-left: -3px;
 }
 
-.control-auto-setting-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 12px;
+.hand.minute {
+  width: 4px;
+  height: 50px;
+  background: #6b7280;
+  margin-left: -2px;
 }
 
-.control-auto-setting-inputs {
-  display: flex;
-  gap: 16px;
-  align-items: center;
+.hand.second {
+  width: 2px;
+  height: 55px;
+  background: #ef4444; /* Màu đỏ nổi bật */
+  margin-left: -1px;
+  z-index: 6;
 }
 
-.control-auto-input-group {
-  flex: 1;
-}
-
-.control-auto-input-label {
-  font-size: 14px;
-  color: #6b7280;
-  display: block;
-  margin-bottom: 8px;
-}
-
-.control-auto-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-}
-
-.control-save-btn {
-  margin-top: 16px;
-  padding: 12px 24px;
-  border-radius: 8px;
-  border: none;
-  background-color: #10b981;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: background-color 0.2s;
-}
-
-.control-save-btn:hover {
-  background-color: #059669;
-}
-
-.control-schedule-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.control-add-schedule-btn {
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: none;
-  background-color: #10b981;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: background-color 0.2s;
-}
-
-.control-add-schedule-btn:hover {
-  background-color: #059669;
-}
-
-.control-schedule-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.control-schedule-item {
-  padding: 16px;
-  background-color: #f9fafb;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.control-schedule-item-active {
-  background-color: #f0fdf4;
-  border-color: #10b981;
-}
-
-.control-schedule-info {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.control-schedule-device-name {
-  font-size: 16px;
-  font-weight: 600;
+/* --- THÔNG TIN CHỮ BÊN DƯỚI --- */
+.city-name {
+  font-size: 1.25rem;
+  font-weight: 700;
   color: #1f2937;
   margin-bottom: 4px;
 }
 
-.control-schedule-time {
-  font-size: 14px;
+.digital-time {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #059669; /* Xanh lá */
+  font-family: monospace;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.date-info {
+  font-size: 0.85rem;
   color: #6b7280;
-  margin: 0;
-}
-
-.control-schedule-actions {
+  background: #f3f4f6;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 600;
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
 }
 
-.control-schedule-toggle-btn {
+/* --- TRẠNG THÁI ĐÊM (DARK MODE CHO CARD) --- */
+.clock-card.night {
+  background: #1f2937; /* Nền tối */
+  border-color: #374151;
+}
+
+.clock-card.night .city-name { color: #f9fafb; }
+.clock-card.night .digital-time { color: #34d399; } /* Xanh sáng hơn trên nền tối */
+
+.clock-card.night .date-info { 
+  background: #374151; 
+  color: #d1d5db; 
+}
+
+.clock-card.night .analog-face { 
+  background: #374151; 
+  border-color: #4b5563;
+  box-shadow: inset 0 5px 10px rgba(0,0,0,0.5); 
+}
+
+.clock-card.night .analog-face::after { background: #e5e7eb; border-color: #374151; }
+.clock-card.night .hand.hour { background: #e5e7eb; }
+.clock-card.night .hand.minute { background: #9ca3af; }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .controls-page { padding: 16px; }
+  .world-header { flex-direction: column; align-items: stretch; text-align: center; }
+  .header-title h1 { justify-content: center; }
+  .add-city-group { flex-direction: column; }
+  .city-select { width: 100%; min-width: auto; }
+  .btn-add-city { justify-content: center; }
+}
+/* --- WORLD MAP CHART STYLES --- */
+.map-section {
+  /* Giữ nền tối cho riêng phần bản đồ để tạo độ sâu */
+  background: #1e293b; 
+  border-radius: 24px;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  height: 450px; /* Tăng chiều cao một chút cho thoáng */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #334155;
+}
+
+.world-map-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* QUAN TRỌNG: Xử lý ảnh bản đồ Wikimedia (Vì ảnh gốc màu đen, cần đảo màu thành trắng để hiện trên nền tối) */
+.world-map-svg image {
+  filter: invert(1) opacity(0.4); 
+  pointer-events: none; /* Không cho chuột tương tác với ảnh nền */
+}
+
+/* --- ĐIỂM THÀNH PHỐ (MARKER) --- */
+.city-marker {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Chấm tròn chính */
+.city-dot {
+  fill: #10b981; /* Màu xanh neon chủ đạo */
+  stroke: #ffffff;
+  stroke-width: 1.5px;
+  transition: all 0.3s;
+  /* Hiệu ứng bóng tỏa sáng */
+  filter: drop-shadow(0 0 4px #10b981);
+}
+
+/* Hiệu ứng vòng tròn lan tỏa (Pulse) */
+.city-marker circle[fill="transparent"] {
+  animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+/* Khi hover vào thành phố */
+.city-marker:hover .city-dot {
+  fill: #fbbf24; /* Chuyển sang màu vàng */
+  r: 6; /* Phóng to nhẹ */
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 8px #fbbf24);
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.5); opacity: 0; stroke: #10b981; stroke-width: 0; }
+  50% { opacity: 0.5; stroke: #10b981; stroke-width: 2px; }
+  100% { transform: scale(2); opacity: 0; stroke-width: 0; }
+}
+
+/* --- TOOLTIP BẢN ĐỒ --- */
+.map-tooltip {
+  position: absolute;
+  background: rgba(15, 23, 42, 0.95); /* Nền rất tối */
+  color: white;
   padding: 8px 16px;
   border-radius: 8px;
-  border: 1px solid #d1d5db;
-  background-color: white;
-  font-weight: 500;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
-}
-
-.control-schedule-toggle-btn:hover {
-  background-color: #f9fafb;
-}
-
-.control-schedule-delete-btn {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: none;
-  background-color: #fee2e2;
-  color: #dc2626;
-  cursor: pointer;
+  font-size: 0.9rem;
+  pointer-events: none;
+  transform: translate(-50%, -140%);
+  white-space: nowrap;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  border: 1px solid #475569;
+  z-index: 20;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  transition: background-color 0.2s;
 }
 
-.control-schedule-delete-btn:hover {
-  background-color: #fecaca;
+/* Mũi tên nhỏ dưới tooltip */
+.map-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px 6px 0;
+  border-style: solid;
+  border-color: rgba(15, 23, 42, 0.95) transparent transparent transparent;
 }
 
-.control-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
+.map-tooltip.visible {
+  opacity: 1;
+  transform: translate(-50%, -130%); /* Hiệu ứng trồi lên nhẹ */
 }
 
-.control-modal-container {
-  background-color: white;
-  border-radius: 16px;
-  padding: 24px;
-  max-width: 500px;
-  width: 100%;
-}
-
-.control-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.control-modal-title {
-  font-size: 20px;
-  font-weight: bold;
-  color: #1f2937;
-  margin: 0;
-}
-
-.control-modal-close {
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  color: #6b7280;
-}
-
-.control-modal-close:hover {
-  color: #1f2937;
-}
-
-.control-modal-body {
-  /* Modal body styles */
-}
-
-.control-modal-field {
-  margin-bottom: 16px;
-}
-
-.control-modal-label {
+.tooltip-time {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #34d399; /* Xanh neon sáng */
   display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 8px;
-}
-
-.control-modal-input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-}
-
-.control-modal-input:focus {
-  outline: none;
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-}
-
-.control-modal-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 24px;
-}
-
-.control-modal-cancel-btn {
-  flex: 1;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  background-color: white;
-  color: #374151;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.control-modal-cancel-btn:hover {
-  background-color: #f9fafb;
-}
-
-.control-modal-save-btn {
-  flex: 1;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  background-color: #10b981;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: background-color 0.2s;
-}
-
-.control-modal-save-btn:hover {
-  background-color: #059669;
-}
-
-@media (max-width: 768px) {
-  .control-page {
-    padding: 16px;
-  }
-
-  .control-title {
-    font-size: 24px;
-  }
-
-  .control-devices-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .control-schedule-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .control-schedule-actions {
-    width: 100%;
-    justify-content: flex-end;
-  }
+  font-family: 'Courier New', monospace;
+  line-height: 1.2;
 }

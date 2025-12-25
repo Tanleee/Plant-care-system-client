@@ -89,7 +89,7 @@ const SignupForm = ({
       <div className="form-header">
         <h2 className="form-title">Tạo tài khoản</h2>
         <p className="form-subtitle">
-          Bắt đầu hành trình chăm sóc cây trồng thông minh
+          Hãy tạo tài khoản để trải nghiệm hệ thống này 
         </p>
       </div>
 

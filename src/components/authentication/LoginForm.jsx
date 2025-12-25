@@ -43,7 +43,7 @@ const LoginForm = ({
     <div className="form-container">
       <div className="form-header">
         <h2 className="form-title">Chào mừng trở lại!</h2>
-        <p className="form-subtitle">Đăng nhập để quản lý vườn cây của bạn</p>
+        <p className="form-subtitle">Đăng nhập để quản lý thiết bị của bạn</p>
       </div>
 
       <div>

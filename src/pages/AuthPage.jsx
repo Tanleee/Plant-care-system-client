@@ -207,12 +207,11 @@ const AuthPage = () => {
                 <div className="logo-icon">
                   <Leaf size={32} color="white" />
                 </div>
-                <h1 className="brand-title">SmartPlant</h1>
+                <h1 className="brand-title">Smart Clock </h1>
               </div>
-              <h2 className="brand-subtitle">Chăm sóc cây trồng thông minh</h2>
+              <h2 className="brand-subtitle">Quản lý thời gian & Môi trường sống</h2>
               <p className="brand-desc">
-                Giám sát và quản lý vườn cây của bạn từ xa với công nghệ IoT
-                hiện đại
+               Giám sát không gian làm việc và quản lý thời gian hiệu quả từ xa với công nghệ IoT hiện đại
               </p>
             </div>
 
@@ -234,8 +233,8 @@ const AuthPage = () => {
                   </svg>
                 </div>
                 <div className="feature-text">
-                  <h3>Theo dõi realtime</h3>
-                  <p>Giám sát độ ẩm, nhiệt độ, ánh sáng 24/7</p>
+                  <h3>Giám sát Môi trường</h3>
+                  <p>Theo dõi Nhiệt độ, Độ ẩm, Ánh sáng góc làm việc 24/7</p>
                 </div>
               </div>
 
@@ -256,8 +255,8 @@ const AuthPage = () => {
                   </svg>
                 </div>
                 <div className="feature-text">
-                  <h3>Tưới tự động</h3>
-                  <p>Hệ thống tưới thông minh theo nhu cầu cây</p>
+                  <h3>Quản lý Đa Múi Giờ</h3>
+                  <p>Cập nhật giờ quốc tế & Bản đồ ngày đêm thời gian thực.</p>
                 </div>
               </div>
 
@@ -278,8 +277,8 @@ const AuthPage = () => {
                   </svg>
                 </div>
                 <div className="feature-text">
-                  <h3>Cảnh báo thông minh</h3>
-                  <p>Nhận thông báo khi cây cần chăm sóc</p>
+                  <h3>Nhắc nhở & Báo thức</h3>
+                  <p>Cảnh báo khi ngồi quá lâu hoặc môi trường không tốt.</p>
                 </div>
               </div>
             </div>

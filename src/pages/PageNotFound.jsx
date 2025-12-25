@@ -56,7 +56,7 @@ const PageNotFound = () => {
               >
                 <span style={{ fontSize: "24px" }}>📈</span>
               </div>
-              <h3>Biểu đồ</h3>
+              <h3>Đặt giờ </h3>
               <p>Theo dõi số liệu</p>
             </div>
             <div
@@ -69,7 +69,7 @@ const PageNotFound = () => {
               >
                 <span style={{ fontSize: "24px" }}>⚙️</span>
               </div>
-              <h3>Điều khiển</h3>
+              <h3>Giờ Quốc Tế</h3>
               <p>Quản lý thiết bị</p>
             </div>
           </div>

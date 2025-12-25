@@ -34,35 +34,35 @@ function App() {
         <Route
           path="user"
           element={
-            <ProtectedRoute>
+           
               <UserAccountPage />
-            </ProtectedRoute>
+          
           }
         />
         <Route
           path="charts"
           element={
-            <ProtectedRoute>
+           
               <ChartsPage />
-            </ProtectedRoute>
+           
           }
           loader={chartDataLoader}
         />
         <Route
           path="controls"
           element={
-            <ProtectedRoute>
+         
               <ControlPage />
-            </ProtectedRoute>
+            
           }
           loader={controlsDataLoader}
         />
         <Route
           path="history"
           element={
-            <ProtectedRoute>
+           
               <HistoryPage />
-            </ProtectedRoute>
+           
           }
           loader={historyDataLoader}
         />

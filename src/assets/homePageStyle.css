@@ -14,7 +14,7 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Header */
+/* --- HEADER (GIỮ NGUYÊN) --- */
 .header {
   max-width: 1400px;
   margin: 0 auto 2.5rem;
@@ -30,7 +30,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0; /* Chỉnh lại margin chút cho gọn */
 }
 
 .header-title {
@@ -85,15 +85,8 @@
 }
 
 @keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(0.95);
-  }
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.95); }
 }
 
 .status-indicator span {
@@ -116,7 +109,79 @@
   color: #b91c1c;
 }
 
-/* Info Cards Row */
+/* --- DASHBOARD GRID (CẬP NHẬT ĐỂ HỖ TRỢ LAYOUT MỚI) --- */
+.dashboard-grid {
+  max-width: 1400px;
+  margin: 0 auto 2rem;
+  display: grid;
+  /* Thay đổi từ auto-fit sang 12 cột để hỗ trợ chia layout task/clock */
+  grid-template-columns: repeat(12, 1fr); 
+  gap: 1.5rem;
+}
+
+/* --- CLASS .CARD MỚI (DỰA TRÊN STYLE GAUGE-CARD CŨ) --- */
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(5, 150, 105, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #e8f5e9;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(5, 150, 105, 0.2);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+/* --- STYLE CHO ĐỒNG HỒ SỐ (MỚI) --- */
+.clock-display {
+  font-size: 4.5rem;
+  font-weight: 800;
+  color: #059669; /* Xanh lá đậm */
+  line-height: 1;
+  letter-spacing: -2px;
+  margin: 10px 0;
+}
+
+/* --- STYLE CHO DANH SÁCH TASK (MỚI) --- */
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #f9fafb;
+  margin-bottom: 10px;
+  border: 1px solid #f3f4f6;
+  transition: all 0.2s;
+}
+
+.task-item:hover {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.task-item.active {
+  background: #ecfdf5;
+  border-left: 4px solid #10b981;
+  box-shadow: 0 2px 5px rgba(16, 185, 129, 0.1);
+}
+
+/* --- CÁC CLASS CŨ (INFO CARDS, GAUGE) --- */
+/* Giữ lại để đảm bảo không lỗi nếu bạn muốn dùng lại component cũ */
 .info-cards-row {
   max-width: 1400px;
   margin: 0 auto;
@@ -126,7 +191,7 @@
   margin-bottom: 2rem;
 }
 
-.info-card {
+.info-card { /* Style cũ của InfoCard */
   background: white;
   border-radius: 16px;
   padding: 1.5rem;
@@ -134,19 +199,6 @@
   transition: all 0.3s ease;
   border: 1px solid #e8f5e9;
 }
-
-.info-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(5, 150, 105, 0.15);
-}
-
-.info-card-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
 .info-icon-wrapper {
   background: linear-gradient(135deg, #ecfdf5, #d1fae5);
   padding: 0.5rem;
@@ -156,244 +208,13 @@
   justify-content: center;
   color: #059669;
 }
-
-.info-title {
-  color: #4b5563;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
 .info-value {
   font-size: 2rem;
   font-weight: 700;
   color: #047857;
-  margin-bottom: 0.5rem;
 }
 
-.info-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.info-subtitle {
-  color: #9ca3af;
-  font-size: 0.75rem;
-}
-
-.info-trend {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-}
-
-.trend-up {
-  background: #d1fae5;
-  color: #059669;
-}
-
-.trend-down {
-  background: #fee2e2;
-  color: #dc2626;
-  transform: rotate(180deg);
-}
-
-/* Main Gauges Grid */
-.dashboard-grid {
-  max-width: 1400px;
-  margin: 0 auto 2rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.gauge-card {
-  background: white;
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(5, 150, 105, 0.1);
-  transition: all 0.3s ease;
-  border: 1px solid #e8f5e9;
-}
-
-.gauge-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(5, 150, 105, 0.2);
-}
-
-.gauge-wrapper {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 1.25rem;
-}
-
-/* Circular Gauge */
-.gauge-svg {
-  width: 140px;
-  height: 140px;
-  transform: rotate(-90deg);
-}
-
-.gauge-progress {
-  transition: stroke-dashoffset 1s ease-out;
-}
-
-.gauge-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.gauge-icon-wrapper {
-  margin: 0 auto 0.5rem;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.gauge-value {
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.gauge-unit {
-  font-size: 0.75rem;
-  color: #9ca3af;
-  margin-top: 0.25rem;
-  font-weight: 500;
-}
-
-.gauge-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 1rem;
-  border-top: 1px solid #e8f5e9;
-}
-
-.gauge-label {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #374151;
-}
-
-.gauge-percentage,
-.gauge-range {
-  font-size: 0.875rem;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-/* Temperature Gauge */
-.temp-gauge-svg {
-  width: 180px;
-  height: 120px;
-}
-
-.temp-gauge-content {
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 10;
-}
-
-/* Light Bar */
-.light-gauge {
-  flex-direction: row;
-  justify-content: space-around;
-  gap: 1.5rem;
-}
-
-.light-icon-wrapper {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #f59e0b;
-  flex-shrink: 0;
-}
-
-.light-bar-container {
-  display: flex;
-  align-items: center;
-}
-
-.light-bar-bg {
-  position: relative;
-  width: 60px;
-  height: 140px;
-  background: #f3f4f6;
-  border-radius: 30px;
-  overflow: hidden;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.light-bar-fill {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: linear-gradient(to top, #f59e0b, #fbbf24, #fde047);
-  border-radius: 30px;
-  transition: height 1s ease-out;
-}
-
-.light-bar-shine {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
-    transparent 100%
-  );
-  animation: shine 2s ease-in-out infinite;
-}
-
-@keyframes shine {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.light-bar-marker {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.light-value-wrapper {
-  text-align: center;
-}
-
-.light-value {
-  color: #f59e0b;
-}
-
-/* Footer */
+/* --- FOOTER (GIỮ NGUYÊN) --- */
 .footer {
   max-width: 1400px;
   margin: 0 auto;
@@ -406,56 +227,32 @@
   box-shadow: 0 2px 10px rgba(5, 150, 105, 0.08);
 }
 
-/* Responsive */
+/* --- RESPONSIVE (CẬP NHẬT) --- */
 @media (max-width: 1024px) {
   .dashboard-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* Tablet chia đôi */
+  }
+  .card[style*="gridColumn: 'span 6'"], 
+  .card[style*="grid-column: span 6"] {
+    grid-column: span 1 !important; /* Reset span trên tablet */
   }
 }
 
 @media (max-width: 768px) {
-  .homepage {
-    padding: 1rem;
-  }
-
-  .header {
-    padding: 1.5rem;
-  }
-
-  .header-top {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .title-group h1 {
-    font-size: 1.5rem;
-  }
-
-  .status-indicator {
-    justify-content: center;
-  }
-
-  .info-cards-row {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
+  .homepage { padding: 1rem; }
+  .header { padding: 1.5rem; }
+  .header-top { flex-direction: column; align-items: stretch; }
+  .title-group h1 { font-size: 1.5rem; }
+  
+  /* Mobile: Mọi thứ về 1 cột */
   .dashboard-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 1.25rem;
   }
-
-  .gauge-card {
-    padding: 1.5rem;
-  }
-
-  .light-gauge {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 480px) {
-  .info-cards-row {
-    grid-template-columns: 1fr;
-  }
-}
+  
+  /* Reset các style span trên mobile */
+  .card { grid-column: auto !important; }
+  
+  .clock-display { font-size: 3rem; }
+}     

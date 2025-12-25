@@ -33,7 +33,7 @@ function Brand() {
       <div className="navbar-logo">
         <Leaf size={32} />
       </div>
-      <span className="navbar-brand-name">SmartPlant</span>
+      <span className="navbar-brand-name">Smart Clock</span>
     </div>
   );
 }
@@ -44,9 +44,9 @@ function NavMenu({ onMobileClose }) {
   const location = useLocation(); // Lấy location hiện tại
 
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", link: "/", icon: Activity },
-    { id: "charts", label: "Biểu đồ", link: "/charts", icon: TrendingUp },
-    { id: "control", label: "Điều khiển", link: "/controls", icon: Settings },
+    { id: "dashboard", label: "Trang chủ", link: "/", icon: Activity },
+    { id: "charts", label: "Đặt giờ", link: "/charts", icon: TrendingUp },
+    { id: "control", label: "Giờ quốc tế", link: "/controls", icon: Settings },
     { id: "history", label: "Lịch sử", link: "/history", icon: History },
   ];
 

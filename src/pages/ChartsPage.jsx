@@ -1,503 +1,240 @@
-import React, { useState, useMemo } from "react";
-import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import {
-  Thermometer,
-  Droplets,
-  Sun,
-  Activity,
-  TrendingUp,
-  Download,
-} from "lucide-react";
-import { useLoaderData } from "react-router";
+import React, { useState, useEffect, useRef } from "react";
+import { Bell, Plus, Trash2, Clock, Calendar, Type } from "lucide-react";
 import "./../assets/chartsPageStyle.css";
 
 import NavBar from "../components/shared/NavBar";
 import Footer from "../components/shared/Footer";
 
-// --- 1. Helper Components & Functions ---
-
-const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="charts-tooltip">
-        <p className="charts-tooltip-label">{label}</p>
-        {payload.map((entry, index) => (
-          <p
-            key={index}
-            className="charts-tooltip-item"
-            style={{ color: entry.color }}
-          >
-            {entry.name}: {entry.value.toFixed(1)} {entry.unit}
-          </p>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
-
-// Hàm format thời gian cho trục X
-const formatTime = (timestamp) => {
-  const date = new Date(timestamp);
-  return `${date.getHours()}:${date.getMinutes().toString().padStart(2, "0")}`;
-};
-
-// Hàm format ngày cho trục X
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  const days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
-  return `${days[date.getDay()]} ${date.getDate()}/${date.getMonth() + 1}`;
-};
-
-// Hàm xử lý dữ liệu sensor realtime cho biểu đồ theo giờ
-const processSensorData = (sensorData) => {
-  if (!sensorData || !Array.isArray(sensorData)) {
-    return [];
-  }
-
-  if (sensorData.length === 0) {
-    return [];
-  }
-
-  const processed = sensorData.map((item) => ({
-    time: formatTime(item.timestamp),
-    temperature: Number(item.temperature) || 0,
-    humidity: Number(item.humidity) || 0,
-    soilMoisture: Number(item.soilMoisture) || 0,
-    light: Number(item.light) || 0,
-    timestamp: item.timestamp,
-  }));
-
-  return processed;
-};
-
-// Hàm xử lý dữ liệu archive cho biểu đồ theo tuần/tháng
-const processArchiveData = (archiveData, timeRange) => {
-  if (!archiveData || !Array.isArray(archiveData)) {
-    return [];
-  }
-
-  if (archiveData.length === 0) {
-    return [];
-  }
-
-  let filteredData = [...archiveData];
-
-  // Lọc dữ liệu theo timeRange
-  if (timeRange === "week") {
-    // Lấy 7 ngày gần nhất
-    filteredData = filteredData.slice(-7);
-  } else if (timeRange === "month") {
-    // Lấy 30 ngày gần nhất
-    filteredData = filteredData.slice(-30);
-  }
-
-  const processed = filteredData.map((item) => ({
-    day: formatDate(item.date),
-    date: item.date,
-    temperature: Number(item.average?.temperature) || 0,
-    humidity: Number(item.average?.humidity) || 0,
-    soilMoisture: Number(item.average?.soilMoisture) || 0,
-    light: Number(item.average?.light) || 0,
-    // Thêm min/max để có thể sử dụng sau này
-    tempMin: Number(item.min?.temperature) || 0,
-    tempMax: Number(item.max?.temperature) || 0,
-  }));
-
-  return processed;
-};
-
-// --- 2. Sub-Components ---
-
-const ChartsHeader = ({ timeRange, setTimeRange }) => {
-  return (
-    <div className="charts-header">
-      <div className="charts-header-content">
-        <div>
-          <h1 className="charts-title">
-            <TrendingUp size={32} className="charts-title-icon" />
-            Biểu Đồ Theo Dõi
-          </h1>
-          <p className="charts-subtitle">
-            Phân tích dữ liệu cảm biến theo thời gian
-          </p>
-        </div>
-
-        <div className="charts-header-actions">
-          {[
-            { value: "day", label: "Hôm nay" },
-            { value: "week", label: "Tuần này" },
-            { value: "month", label: "Tháng này" },
-          ].map((option) => (
-            <button
-              key={option.value}
-              onClick={() => setTimeRange(option.value)}
-              className={`charts-time-btn ${
-                timeRange === option.value ? "charts-time-btn-active" : ""
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
-          <button className="charts-export-btn">
-            <Download size={18} />
-            Xuất báo cáo
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const MetricsGrid = ({
-  metrics,
-  selectedMetric,
-  setSelectedMetric,
-  currentData,
-}) => {
-  return (
-    <div className="charts-metrics-grid">
-      {metrics.map((metric) => {
-        const Icon = metric.icon;
-
-        if (!currentData || currentData.length < 2) {
-          return (
-            <div key={metric.id} className="charts-metric-card">
-              <div className="charts-metric-header">
-                <div
-                  className="charts-metric-icon"
-                  style={{ backgroundColor: `${metric.color}15` }}
-                >
-                  <Icon size={24} color={metric.color} />
-                </div>
-                <span className="charts-metric-change">--</span>
-              </div>
-              <h3 className="charts-metric-name">{metric.name}</h3>
-              <p className="charts-metric-value">
-                -- <span className="charts-metric-unit">{metric.unit}</span>
-              </p>
-            </div>
-          );
-        }
-
-        const latestValue = currentData[currentData.length - 1][metric.id];
-        const prevValue = currentData[currentData.length - 2][metric.id];
-        const change =
-          prevValue !== 0
-            ? (((latestValue - prevValue) / prevValue) * 100).toFixed(1)
-            : 0;
-
-        return (
-          <div
-            key={metric.id}
-            onClick={() => setSelectedMetric(metric.id)}
-            className={`charts-metric-card ${
-              selectedMetric === metric.id ? "charts-metric-card-selected" : ""
-            }`}
-            style={{
-              borderColor:
-                selectedMetric === metric.id ? metric.color : "transparent",
-            }}
-          >
-            <div className="charts-metric-header">
-              <div
-                className="charts-metric-icon"
-                style={{ backgroundColor: `${metric.color}15` }}
-              >
-                <Icon size={24} color={metric.color} />
-              </div>
-              <span
-                className={`charts-metric-change ${
-                  change >= 0
-                    ? "charts-metric-change-positive"
-                    : "charts-metric-change-negative"
-                }`}
-              >
-                {change >= 0 ? "+" : ""}
-                {change}%
-              </span>
-            </div>
-            <h3 className="charts-metric-name">{metric.name}</h3>
-            <p className="charts-metric-value">
-              {latestValue.toFixed(1)}{" "}
-              <span className="charts-metric-unit">{metric.unit}</span>
-            </p>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-const TemperatureChart = ({ data, timeRange }) => {
-  if (!data || data.length === 0) {
-    return (
-      <div className="charts-card">
-        <h2 className="charts-card-title">Biểu Đồ Nhiệt Độ Theo Thời Gian</h2>
-        <div
-          style={{
-            height: 350,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <p style={{ color: "#6b7280" }}>Không có dữ liệu</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="charts-card">
-      <h2 className="charts-card-title">Biểu Đồ Nhiệt Độ Theo Thời Gian</h2>
-      <ResponsiveContainer width="100%" height={350}>
-        <AreaChart data={data}>
-          <defs>
-            <linearGradient id="colorTemp" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-          <XAxis
-            dataKey={timeRange === "day" ? "time" : "day"}
-            stroke="#6b7280"
-          />
-          <YAxis stroke="#6b7280" />
-          <Tooltip content={<CustomTooltip />} />
-          <Area
-            type="monotone"
-            dataKey="temperature"
-            stroke="#ef4444"
-            strokeWidth={2}
-            fill="url(#colorTemp)"
-            name="Nhiệt độ"
-            unit="°C"
-          />
-        </AreaChart>
-      </ResponsiveContainer>
-    </div>
-  );
-};
-
-const HumiditySoilCharts = ({ data, timeRange }) => {
-  if (!data || data.length === 0) {
-    return (
-      <div className="charts-two-column">
-        <div className="charts-card">
-          <h2 className="charts-card-title">Độ Ẩm Không Khí</h2>
-          <div
-            style={{
-              height: 300,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <p style={{ color: "#6b7280" }}>Không có dữ liệu</p>
-          </div>
-        </div>
-        <div className="charts-card">
-          <h2 className="charts-card-title">Độ Ẩm Đất</h2>
-          <div
-            style={{
-              height: 300,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <p style={{ color: "#6b7280" }}>Không có dữ liệu</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="charts-two-column">
-      {/* Humidity Chart */}
-      <div className="charts-card">
-        <h2 className="charts-card-title">Độ Ẩm Không Khí</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis
-              dataKey={timeRange === "day" ? "time" : "day"}
-              stroke="#6b7280"
-            />
-            <YAxis stroke="#6b7280" />
-            <Tooltip content={<CustomTooltip />} />
-            <Line
-              type="monotone"
-              dataKey="humidity"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              dot={{ r: 4 }}
-              name="Độ ẩm KK"
-              unit="%"
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Soil Moisture Chart */}
-      <div className="charts-card">
-        <h2 className="charts-card-title">Độ Ẩm Đất</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis
-              dataKey={timeRange === "day" ? "time" : "day"}
-              stroke="#6b7280"
-            />
-            <YAxis stroke="#6b7280" />
-            <Tooltip content={<CustomTooltip />} />
-            <Line
-              type="monotone"
-              dataKey="soilMoisture"
-              stroke="#10b981"
-              strokeWidth={2}
-              dot={{ r: 4 }}
-              name="Độ ẩm đất"
-              unit="%"
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-};
-
-const LightChart = ({ data, timeRange }) => {
-  if (!data || data.length === 0) {
-    return (
-      <div className="charts-card">
-        <h2 className="charts-card-title">Cường Độ Ánh Sáng</h2>
-        <div
-          style={{
-            height: 300,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <p style={{ color: "#6b7280" }}>Không có dữ liệu</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="charts-card">
-      <h2 className="charts-card-title">Cường Độ Ánh Sáng</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-          <XAxis
-            dataKey={timeRange === "day" ? "time" : "day"}
-            stroke="#6b7280"
-          />
-          <YAxis stroke="#6b7280" />
-          <Tooltip content={<CustomTooltip />} />
-          <Bar
-            dataKey="light"
-            fill="#f59e0b"
-            radius={[8, 8, 0, 0]}
-            name="Ánh sáng"
-            unit=" Lux"
-          />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-};
-
-// --- 3. Main Component ---
-
 const ChartsPage = () => {
-  const [timeRange, setTimeRange] = useState("day");
-  const [selectedMetric, setSelectedMetric] = useState("all");
+  // --- STATE ---
+  const [alarms, setAlarms] = useState([
+    { id: 1, time: "06:30", label: "Dậy đi làm", days: ["T2", "T3", "T4", "T5", "T6"], isActive: true },
+    { id: 2, time: "09:00", label: "Họp Team", days: ["CN"], isActive: false },
+  ]);
 
-  // Lấy dữ liệu thực từ API
-  const chartsData = useLoaderData();
+  const [showModal, setShowModal] = useState(false);
+  
+  // State cho Modal (Giờ, Phút, Tên, Ngày lặp lại)
+  const [selectedHour, setSelectedHour] = useState("08");
+  const [selectedMinute, setSelectedMinute] = useState("00");
+  const [tempLabel, setTempLabel] = useState("");
+  const [tempDays, setTempDays] = useState([]); // Mảng chứa các ngày được chọn
 
-  // Xử lý dữ liệu dựa trên timeRange
-  const currentData = useMemo(() => {
-    if (timeRange === "day") {
-      // Sử dụng dữ liệu realtime cho "Hôm nay"
-      const sensorData = chartsData?.sensorData || [];
-      return processSensorData(sensorData);
-    } else {
-      // Sử dụng dữ liệu archive cho "Tuần này" và "Tháng này"
-      const archiveData = chartsData?.sensorDataArchieve || [];
-      return processArchiveData(archiveData, timeRange);
+  // Ref cuộn
+  const hourRef = useRef(null);
+  const minuteRef = useRef(null);
+
+  // Danh sách các ngày trong tuần để render nút
+  const daysOfWeek = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+
+  // --- HANDLERS ---
+
+  const handleOpenModal = () => {
+    const now = new Date();
+    setSelectedHour(now.getHours().toString().padStart(2, '0'));
+    setSelectedMinute(now.getMinutes().toString().padStart(2, '0'));
+    setTempLabel(""); // Reset tên
+    setTempDays([]);  // Reset ngày (Mặc định là một lần)
+    setShowModal(true);
+  };
+
+  // Cuộn tự động
+  useEffect(() => {
+    if (showModal) {
+      setTimeout(() => {
+        const hourEl = document.getElementById(`hour-${selectedHour}`);
+        const minuteEl = document.getElementById(`minute-${selectedMinute}`);
+        if (hourEl) hourEl.scrollIntoView({ block: "center", behavior: "smooth" });
+        if (minuteEl) minuteEl.scrollIntoView({ block: "center", behavior: "smooth" });
+      }, 100);
     }
-  }, [chartsData, timeRange]);
+  }, [showModal]);
 
-  const metrics = [
-    {
-      id: "temperature",
-      name: "Nhiệt độ",
-      icon: Thermometer,
-      color: "#ef4444",
-      unit: "°C",
-    },
-    {
-      id: "humidity",
-      name: "Độ ẩm không khí",
-      icon: Droplets,
-      color: "#3b82f6",
-      unit: "%",
-    },
-    {
-      id: "soilMoisture",
-      name: "Độ ẩm đất",
-      icon: Activity,
-      color: "#10b981",
-      unit: "%",
-    },
-    {
-      id: "light",
-      name: "Ánh sáng",
-      icon: Sun,
-      color: "#f59e0b",
-      unit: "Lux",
-    },
-  ];
+  // Xử lý chọn/bỏ chọn ngày
+  const toggleDay = (day) => {
+    if (tempDays.includes(day)) {
+      setTempDays(tempDays.filter(d => d !== day)); // Bỏ chọn
+    } else {
+      setTempDays([...tempDays, day]); // Chọn thêm
+    }
+  };
+
+  // Lưu báo thức
+  const handleSaveAlarm = () => {
+    const timeString = `${selectedHour}:${selectedMinute}`;
+    const newAlarm = {
+      id: Date.now(),
+      time: timeString,
+      label: tempLabel || "Báo thức", // Nếu không nhập tên thì để mặc định
+      days: tempDays,
+      isActive: true,
+    };
+    setAlarms([newAlarm, ...alarms]);
+    setShowModal(false);
+  };
+
+  const handleDelete = (id) => setAlarms(alarms.filter((alarm) => alarm.id !== id));
+
+  const handleToggle = (id) => {
+    setAlarms(alarms.map((alarm) =>
+      alarm.id === id ? { ...alarm, isActive: !alarm.isActive } : alarm
+    ));
+  };
+
+  // Hàm hiển thị text ngày lặp lại cho đẹp
+  const formatDays = (days) => {
+    if (!days || days.length === 0) return "Một lần";
+    if (days.length === 7) return "Hàng ngày";
+    if (days.length === 5 && !days.includes("T7") && !days.includes("CN")) return "Thứ 2 - Thứ 6";
+    if (days.length === 2 && days.includes("T7") && days.includes("CN")) return "Cuối tuần";
+    return days.join(", ");
+  };
+
+  const activeCount = alarms.filter(a => a.isActive).length;
+  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0"));
+  const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0"));
 
   return (
     <>
       <NavBar />
+      
       <div className="charts-page">
-        <ChartsHeader timeRange={timeRange} setTimeRange={setTimeRange} />
+        <div className="alarm-container">
+          
+          {/* Header */}
+          <div className="alarm-header">
+            <div className="alarm-title">
+              <div style={{ background: '#d1fae5', padding: 10, borderRadius: '50%', color: '#059669' }}>
+                <Bell size={28} />
+              </div>
+              <div>
+                <h1>Quản lý Báo thức</h1>
+                <p>Đồng bộ với Smart Desk Clock</p>
+              </div>
+            </div>
+            <div className="alarm-count-badge">
+              {activeCount} đang bật
+            </div>
+          </div>
 
-        <MetricsGrid
-          metrics={metrics}
-          selectedMetric={selectedMetric}
-          setSelectedMetric={setSelectedMetric}
-          currentData={currentData}
-        />
+          <div className="add-alarm-card" style={{ flexDirection: 'row', justifyContent: 'center', padding: '40px' }}>
+             <button className="btn-open-modal" onClick={handleOpenModal}>
+                <Plus size={24} /> Thiết lập báo thức mới
+             </button>
+          </div>
 
-        <TemperatureChart data={currentData} timeRange={timeRange} />
+          {/* Danh sách báo thức */}
+          <div className="alarm-list">
+            {alarms.map((alarm) => (
+              <div key={alarm.id} className={`alarm-item ${!alarm.isActive ? 'inactive' : 'active'}`}>
+                 <div className="alarm-info">
+                    <div className="alarm-icon-box">
+                        <Clock size={24} />
+                    </div>
+                    <div className="alarm-text">
+                        <h3>{alarm.time}</h3>
+                        <p style={{fontWeight: 'bold', color: '#374151'}}>{alarm.label}</p>
+                        {/* Hiển thị ngày lặp lại */}
+                        <span className="alarm-days">{formatDays(alarm.days)}</span>
+                    </div>
+                 </div>
+                 <div className="alarm-actions">
+                    <label className="switch">
+                      <input type="checkbox" checked={alarm.isActive} onChange={() => handleToggle(alarm.id)} />
+                      <span className="slider"></span>
+                    </label>
+                    <button className="btn-delete" onClick={() => handleDelete(alarm.id)}>
+                      <Trash2 size={20} />
+                    </button>
+                 </div>
+              </div>
+            ))}
+          </div>
 
-        <HumiditySoilCharts data={currentData} timeRange={timeRange} />
-
-        <LightChart data={currentData} timeRange={timeRange} />
+        </div>
       </div>
+
+    {/* --- MODAL (POPUP) TỐI GIẢN --- */}
+{showModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <div className="modal-header">
+        <h3>Đặt báo thức</h3>
+      </div>
+      
+      {/* 1. Time Picker (Bánh xe số) */}
+      <div className="custom-time-picker">
+        {/* Cột Giờ */}
+        <div className="picker-column" ref={hourRef}>
+          <div className="spacer" style={{height: 65}}></div> {/* Spacer để số đầu nằm giữa */}
+          {hours.map((h) => (
+            <div 
+              key={h} 
+              id={`hour-${h}`} 
+              className={`picker-item ${selectedHour === h ? 'selected' : ''}`} 
+              onClick={() => setSelectedHour(h)}
+            >
+              {h}
+            </div>
+          ))}
+          <div className="spacer" style={{height: 65}}></div>
+        </div>
+
+        {/* Dấu hai chấm */}
+        <div className="time-separator">:</div>
+
+        {/* Cột Phút */}
+        <div className="picker-column" ref={minuteRef}>
+          <div className="spacer" style={{height: 65}}></div>
+          {minutes.map((m) => (
+            <div 
+              key={m} 
+              id={`minute-${m}`} 
+              className={`picker-item ${selectedMinute === m ? 'selected' : ''}`} 
+              onClick={() => setSelectedMinute(m)}
+            >
+              {m}
+            </div>
+          ))}
+          <div className="spacer" style={{height: 65}}></div>
+        </div>
+      </div>
+
+      {/* 2. Nhập tên (Đơn giản hóa) */}
+      <div className="simple-input-group">
+        <Type size={16} className="input-icon-simple"/>
+        <input 
+          type="text" 
+          className="simple-text-input" 
+          placeholder="Nhập tên (VD: Uống thuốc)..."
+          value={tempLabel}
+          onChange={(e) => setTempLabel(e.target.value)}
+        />
+      </div>
+
+      {/* 3. Chọn ngày (Clean Style) */}
+      <div className="clean-day-selector">
+        {daysOfWeek.map((day) => (
+          <div 
+            key={day} 
+            className={`clean-day-btn ${tempDays.includes(day) ? 'selected' : ''}`}
+            onClick={() => toggleDay(day)}
+          >
+            {day}
+          </div>
+        ))}
+      </div>
+
+      {/* Actions */}
+      <div className="modal-actions">
+        <button className="btn-cancel" onClick={() => setShowModal(false)}>Hủy</button>
+        <button className="btn-confirm" onClick={handleSaveAlarm}>
+          Lưu thiết lập
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       <Footer />
     </>
   );

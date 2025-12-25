@@ -84,7 +84,7 @@ const HomePage = () => {
   // --- GIAO DIỆN ---
   return (
     <>
-      {/* <NavBar /> */}
+      <NavBar />
       <div className="homepage">
         
         {/* HEADER */}

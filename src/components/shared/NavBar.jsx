@@ -33,7 +33,7 @@ function Brand() {
       <div className="navbar-logo">
         <Leaf size={32} />
       </div>
-      <span className="navbar-brand-name">Smart Clock</span>
+      <span className="navbar-brand-name">SmartPlant</span>
     </div>
   );
 }
@@ -44,9 +44,9 @@ function NavMenu({ onMobileClose }) {
   const location = useLocation(); // Lấy location hiện tại
 
   const menuItems = [
-    { id: "dashboard", label: "Trang chủ", link: "/", icon: Activity },
-    { id: "charts", label: "Đặt giờ", link: "/charts", icon: TrendingUp },
-    { id: "control", label: "Giờ quốc tế", link: "/controls", icon: Settings },
+    { id: "dashboard", label: "Dashboard", link: "/", icon: Activity },
+    { id: "charts", label: "Biểu đồ", link: "/charts", icon: TrendingUp },
+    { id: "control", label: "Điều khiển", link: "/controls", icon: Settings },
     { id: "history", label: "Lịch sử", link: "/history", icon: History },
   ];
 
@@ -78,10 +78,6 @@ function NavMenu({ onMobileClose }) {
 // User Section Component (khi đã đăng nhập)
 function UserSection({ user, isMobile }) {
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const { notifications } = useRouteLoaderData("root");
-  const unreadCount = notifications?.filter((n) => !n.isRead).length || 0;
-
   const navigate = useNavigate();
   const revalidator = useRevalidator();
 
@@ -132,45 +128,18 @@ function UserSection({ user, isMobile }) {
             <span>👤</span>
             <span>Hồ sơ</span>
           </button>
-          <button
-            className="user-menu-item"
-            onClick={() => setShowNotifications(true)}
-          >
-            <span>🔔</span>
-            <span>Thông báo</span>
-            {unreadCount > 0 && (
-              <span className="notif-count-badge">{unreadCount}</span>
-            )}
-          </button>
           <div className="user-menu-divider"></div>
           <button className="user-menu-item logout" onClick={handleLogout}>
             <LogOut size={16} />
             <span>Đăng xuất</span>
           </button>
         </div>
-
-        {/* Notification Center for Mobile */}
-        <NotificationCenter
-          isOpen={showNotifications}
-          onClose={() => setShowNotifications(false)}
-        />
       </div>
     );
   }
 
   return (
     <div className="navbar-user">
-      {/* Notification Bell Icon */}
-      <button
-        className="notif-bell-btn"
-        onClick={() => setShowNotifications(true)}
-      >
-        <Bell size={20} />
-        {unreadCount > 0 && (
-          <span className="notif-bell-badge">{unreadCount}</span>
-        )}
-      </button>
-
       {/* User Menu Button */}
       <button
         className="user-button"
@@ -217,15 +186,11 @@ function UserSection({ user, isMobile }) {
           </div>
         </div>
       )}
-
-      {/* Notification Center */}
-      <NotificationCenter
-        isOpen={showNotifications}
-        onClose={() => setShowNotifications(false)}
-      />
     </div>
   );
 }
+
+
 // Auth Buttons Component (khi chưa đăng nhập)
 function AuthButtons({ isMobile }) {
   const navigate = useNavigate();

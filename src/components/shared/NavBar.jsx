@@ -16,7 +16,7 @@ import {
   useLocation,
   useRevalidator,
 } from "react-router";
-import NotificationCenter from "./NotificationCenter";
+
 import getApiUrl from "./../../utils/getApiUrl";
 import "./../../assets/navBar.css";
 
@@ -33,7 +33,7 @@ function Brand() {
       <div className="navbar-logo">
         <Leaf size={32} />
       </div>
-      <span className="navbar-brand-name">SmartPlant</span>
+      <span className="navbar-brand-name">SmartClock</span>
     </div>
   );
 }

@@ -39,10 +39,11 @@ function App() {
         <Route
           path="charts"
           element={
-           
+
               <ChartsPage />
-           
+              
           }
+          loader={alarmLoader}
         />
         <Route
           path="controls"

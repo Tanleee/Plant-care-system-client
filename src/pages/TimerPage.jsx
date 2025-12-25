@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Hourglass } from "lucide-react";
 import NavBar from "../components/shared/NavBar";
 import Footer from "../components/shared/Footer";
 import "./../assets/timerStyles.css";
@@ -87,7 +88,7 @@ const TimerPage = () => {
         <div className="timer-content-wrapper">
           <div className="timer-header-section">
             <div className="timer-icon-wrapper">
-              <svg
+              {/* <svg
                 className="timer-icon-svg"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -95,7 +96,8 @@ const TimerPage = () => {
               >
                 <circle cx="12" cy="12" r="10" strokeWidth="2" />
                 <path d="M12 6v6l4 2" strokeWidth="2" />
-              </svg>
+              </svg> */}
+              <Hourglass className="timer-icon-svg" />
             </div>
             <h1 className="timer-page-title">Hẹn Giờ</h1>
           </div>

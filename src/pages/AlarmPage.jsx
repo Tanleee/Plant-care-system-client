@@ -1,416 +1,316 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useLoaderData } from "react-router";
-import { Bell, Plus, Trash2, Clock } from "lucide-react";
-import "./../assets/chartsPageStyle.css";
-
-import NavBar from "../components/shared/NavBar";
-import Footer from "../components/shared/Footer";
+import React, { useState, useEffect } from "react";
+import getApiUrl from "../utils/getApiUrl";
+import "./../assets/alarmPageStyle.css";
 
 const AlarmPage = () => {
-  // Lấy dữ liệu từ loader
-  const loadedAlarms = useLoaderData();
-
-  // --- STATE ---
   const [alarms, setAlarms] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [selectedHour, setSelectedHour] = useState(22);
+  const [selectedMin, setSelectedMin] = useState(10);
+  const [alarmName, setAlarmName] = useState("");
+  const [selectedDays, setSelectedDays] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
+  const [loading, setLoading] = useState(true);
 
-  // State cho Modal (Giờ, Phút, Tên, Ngày lặp lại)
-  const [selectedHour, setSelectedHour] = useState("08");
-  const [selectedMinute, setSelectedMinute] = useState("00");
-  const [tempLabel, setTempLabel] = useState("");
-  const [tempDays, setTempDays] = useState([]); // Mảng chứa các ngày được chọn
+  const dayLabels = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 
-  // Ref cuộn
-  const hourRef = useRef(null);
-  const minuteRef = useRef(null);
-
-  // Danh sách các ngày trong tuần để render nút
-  const daysOfWeek = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-
-  // --- LOAD DỮ LIỆU TỪ API ---
   useEffect(() => {
-    if (loadedAlarms && loadedAlarms.length > 0) {
-      // Chuyển đổi dữ liệu từ API sang format của UI
-      const formattedAlarms = loadedAlarms.map((alarm) => ({
-        id: alarm._id || alarm.id,
-        time: `${alarm.hour.toString().padStart(2, "0")}:${alarm.min
-          .toString()
-          .padStart(2, "0")}`,
-        label: alarm.label || "Báo thức",
-        days: convertRepeatArrayToDays(alarm.repeat),
-        isActive: alarm.enable,
-      }));
-      setAlarms(formattedAlarms);
-    }
-  }, [loadedAlarms]);
+    fetchAlarms();
+  }, []);
 
-  // Hàm chuyển đổi mảng repeat [true, false, ...] sang ["T2", "T3", ...]
-  const convertRepeatArrayToDays = (repeatArray) => {
-    if (!repeatArray || repeatArray.length !== 7) return [];
-    const days = [];
-    const dayLabels = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-    repeatArray.forEach((isActive, index) => {
-      if (isActive) {
-        days.push(dayLabels[index]);
-      }
-    });
-    return days;
-  };
-
-  // Hàm chuyển đổi mảng days ["T2", "T3", ...] sang repeat array [true, false, ...]
-  const convertDaysToRepeatArray = (days) => {
-    const dayLabels = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-    return dayLabels.map((day) => days.includes(day));
-  };
-
-  // --- HANDLERS ---
-
-  const handleOpenModal = () => {
-    const now = new Date();
-    setSelectedHour(now.getHours().toString().padStart(2, "0"));
-    setSelectedMinute(now.getMinutes().toString().padStart(2, "0"));
-    setTempLabel("");
-    setTempDays([]);
-    setShowModal(true);
-  };
-
-  // Cuộn tự động
-  useEffect(() => {
-    if (showModal) {
-      setTimeout(() => {
-        const hourEl = document.getElementById(`hour-${selectedHour}`);
-        const minuteEl = document.getElementById(`minute-${selectedMinute}`);
-        if (hourEl)
-          hourEl.scrollIntoView({ block: "center", behavior: "smooth" });
-        if (minuteEl)
-          minuteEl.scrollIntoView({ block: "center", behavior: "smooth" });
-      }, 100);
-    }
-  }, [showModal, selectedHour, selectedMinute]);
-
-  // Xử lý chọn/bỏ chọn ngày
-  const toggleDay = (day) => {
-    if (tempDays.includes(day)) {
-      setTempDays(tempDays.filter((d) => d !== day));
-    } else {
-      setTempDays([...tempDays, day]);
-    }
-  };
-
-  // Lưu báo thức (GỌI API CREATE)
-  const handleSaveAlarm = async () => {
+  const fetchAlarms = async () => {
     try {
-      const newAlarmData = {
-        hour: parseInt(selectedHour),
-        min: parseInt(selectedMinute),
-        label: tempLabel || "Báo thức",
-        repeat: convertDaysToRepeatArray(tempDays),
-        enable: true,
-      };
+      const response = await fetch(getApiUrl("/api/v1/alarm"));
+      const data = await response.json();
+      if (data.status === "success") {
+        setAlarms(data.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching alarms:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const response = await fetch("/api/v1/alarm", {
+  const createAlarm = async () => {
+    try {
+      const response = await fetch(getApiUrl("/api/v1/alarm"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newAlarmData),
-        credentials: "include", // Để gửi cookie authentication
+        body: JSON.stringify({
+          hour: selectedHour,
+          min: selectedMin,
+          enable: true,
+          repeat: selectedDays,
+        }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to create alarm");
+      const data = await response.json();
+      if (data.status === "success") {
+        setAlarms([...alarms, data.data.data]);
+        closeModal();
       }
-
-      const responseData = await response.json();
-      const createdAlarm =
-        responseData.data?.alarm || responseData.data || responseData;
-
-      // Thêm vào state local
-      const formattedAlarm = {
-        id: createdAlarm._id || createdAlarm.id,
-        time: `${selectedHour}:${selectedMinute}`,
-        label: tempLabel || "Báo thức",
-        days: tempDays,
-        isActive: true,
-      };
-
-      setAlarms([formattedAlarm, ...alarms]);
-      setShowModal(false);
     } catch (error) {
       console.error("Error creating alarm:", error);
-      alert(`Không thể tạo báo thức: ${error.message}`);
     }
   };
 
-  // Xóa báo thức (GỌI API DELETE)
-  const handleDelete = async (id) => {
-    if (!window.confirm("Bạn có chắc muốn xóa báo thức này?")) {
-      return;
-    }
-
+  const toggleAlarm = async (id, currentState) => {
     try {
-      const response = await fetch(`/api/v1/alarm/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to delete alarm");
-      }
-
-      setAlarms(alarms.filter((alarm) => alarm.id !== id));
-    } catch (error) {
-      console.error("Error deleting alarm:", error);
-      alert(`Không thể xóa báo thức: ${error.message}`);
-    }
-  };
-
-  // Toggle bật/tắt báo thức (GỌI API UPDATE)
-  const handleToggle = async (id) => {
-    try {
-      const alarm = alarms.find((a) => a.id === id);
-      if (!alarm) return;
-
-      const updatedData = {
-        enable: !alarm.isActive,
-      };
-
-      const response = await fetch(`/api/v1/alarm/${id}`, {
+      const response = await fetch(getApiUrl(`/api/v1/alarm/${id}`), {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedData),
-        credentials: "include",
+        body: JSON.stringify({
+          enable: !currentState,
+        }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to update alarm");
+      const data = await response.json();
+      if (data.status === "success") {
+        setAlarms(
+          alarms.map((alarm) =>
+            alarm._id === id ? { ...alarm, enable: !currentState } : alarm
+          )
+        );
       }
-
-      setAlarms(
-        alarms.map((alarm) =>
-          alarm.id === id ? { ...alarm, isActive: !alarm.isActive } : alarm
-        )
-      );
     } catch (error) {
       console.error("Error updating alarm:", error);
-      alert(`Không thể cập nhật báo thức: ${error.message}`);
     }
   };
 
-  // Hàm hiển thị text ngày lặp lại cho đẹp
-  const formatDays = (days) => {
-    if (!days || days.length === 0) return "Một lần";
-    if (days.length === 7) return "Hàng ngày";
-    if (days.length === 5 && !days.includes("T7") && !days.includes("CN"))
-      return "Thứ 2 - Thứ 6";
-    if (days.length === 2 && days.includes("T7") && days.includes("CN"))
-      return "Cuối tuần";
-    return days.join(", ");
+  const deleteAlarm = async (id) => {
+    try {
+      await fetch(getApiUrl(`/api/v1/alarm/${id}`), {
+        method: "DELETE",
+      });
+      setAlarms(alarms.filter((alarm) => alarm._id !== id));
+    } catch (error) {
+      console.error("Error deleting alarm:", error);
+    }
   };
 
-  const activeCount = alarms.filter((a) => a.isActive).length;
-  const hours = Array.from({ length: 24 }, (_, i) =>
-    i.toString().padStart(2, "0")
-  );
-  const minutes = Array.from({ length: 60 }, (_, i) =>
-    i.toString().padStart(2, "0")
-  );
+  const openModal = () => {
+    setShowModal(true);
+    setSelectedHour(22);
+    setSelectedMin(10);
+    setAlarmName("");
+    setSelectedDays([false, false, false, false, false, false, false]);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const toggleDay = (index) => {
+    const newDays = [...selectedDays];
+    newDays[index] = !newDays[index];
+    setSelectedDays(newDays);
+  };
+
+  const getRepeatText = (repeat) => {
+    const count = repeat.filter(Boolean).length;
+    if (count === 0) return "Hằng ngày";
+    if (count === 7) return "Hằng ngày";
+    return "Tùy chỉnh";
+  };
+
+  const hours = Array.from({ length: 24 }, (_, i) => i);
+  const minutes = Array.from({ length: 60 }, (_, i) => i);
 
   return (
-    <>
-      <NavBar />
-
-      <div className="charts-page">
-        <div className="alarm-container">
-          {/* Header */}
-          <div className="alarm-header">
-            <div className="alarm-title">
-              <div
-                style={{
-                  background: "#d1fae5",
-                  padding: 10,
-                  borderRadius: "50%",
-                  color: "#059669",
-                }}
-              >
-                <Bell size={28} />
-              </div>
-              <div>
-                <h1>Quản lý Báo thức</h1>
-                <p>Đồng bộ với Smart Desk Clock</p>
-              </div>
-            </div>
-            <div className="alarm-count-badge">{activeCount} đang bật</div>
+    <div className="alarmpage-container">
+      <div className="alarmpage-header">
+        <div className="alarmpage-header-content">
+          <div className="alarmpage-bell-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.37 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.64 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z"
+                fill="currentColor"
+              />
+            </svg>
           </div>
-
-          <div
-            className="add-alarm-card"
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              padding: "40px",
-            }}
-          >
-            <button className="btn-open-modal" onClick={handleOpenModal}>
-              <Plus size={24} /> Thiết lập báo thức mới
-            </button>
+          <div>
+            <h1 className="alarmpage-title">Quản lý Báo thức</h1>
+            <p className="alarmpage-subtitle">Đồng bộ với Smart Desk Clock</p>
           </div>
-
-          {/* Danh sách báo thức */}
-          <div className="alarm-list">
-            {alarms.length === 0 ? (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "40px",
-                  color: "#6b7280",
-                }}
-              >
-                <p>Chưa có báo thức nào. Hãy thêm báo thức mới!</p>
-              </div>
-            ) : (
-              alarms.map((alarm) => (
-                <div
-                  key={alarm.id}
-                  className={`alarm-item ${
-                    !alarm.isActive ? "inactive" : "active"
-                  }`}
-                >
-                  <div className="alarm-info">
-                    <div className="alarm-icon-box">
-                      <Clock size={24} />
-                    </div>
-                    <div className="alarm-text">
-                      <h3>{alarm.time}</h3>
-                      <p style={{ fontWeight: "bold", color: "#374151" }}>
-                        {alarm.label}
-                      </p>
-                      <span className="alarm-days">
-                        {formatDays(alarm.days)}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="alarm-actions">
-                    <label className="switch">
-                      <input
-                        type="checkbox"
-                        checked={alarm.isActive}
-                        onChange={() => handleToggle(alarm.id)}
-                      />
-                      <span className="slider"></span>
-                    </label>
-                    <button
-                      className="btn-delete"
-                      onClick={() => handleDelete(alarm.id)}
-                    >
-                      <Trash2 size={20} />
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+        </div>
+        <div className="alarmpage-status">
+          <span className="alarmpage-status-count">{alarms.length}</span> đang
+          bật
         </div>
       </div>
 
-      {/* --- MODAL (POPUP) TỐI GIẢN --- */}
+      <div className="alarmpage-create-section">
+        <button className="alarmpage-create-btn" onClick={openModal}>
+          <span className="alarmpage-plus-icon">+</span>
+          Thiết lập báo thức mới
+        </button>
+      </div>
+
+      <div className="alarmpage-list">
+        {loading ? (
+          <div className="alarmpage-loading">Đang tải...</div>
+        ) : alarms.length === 0 ? (
+          <div className="alarmpage-empty">Chưa có báo thức nào</div>
+        ) : (
+          alarms.map((alarm) => (
+            <div key={alarm._id} className="alarmpage-item">
+              <div className="alarmpage-item-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <path
+                    d="M12 6V12L16 14"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+              <div className="alarmpage-item-content">
+                <div className="alarmpage-item-time">
+                  {String(alarm.hour).padStart(2, "0")}:
+                  {String(alarm.min).padStart(2, "0")}
+                </div>
+                <div className="alarmpage-item-info">
+                  <span className="alarmpage-item-label">Báo thức</span>
+                  <span className="alarmpage-item-repeat">
+                    {getRepeatText(alarm.repeat)}
+                  </span>
+                </div>
+              </div>
+              <div className="alarmpage-item-actions">
+                <label className="alarmpage-toggle">
+                  <input
+                    type="checkbox"
+                    checked={alarm.enable}
+                    onChange={() => toggleAlarm(alarm._id, alarm.enable)}
+                  />
+                  <span className="alarmpage-toggle-slider"></span>
+                </label>
+                <button
+                  className="alarmpage-delete-btn"
+                  onClick={() => deleteAlarm(alarm._id)}
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path
+                      d="M5 7H15M8 10V14M12 10V14M13 7V5C13 4.44772 12.5523 4 12 4H8C7.44772 4 7 4.44772 7 5V7M6 7H14L13.5 16C13.5 16.5523 13.0523 17 12.5 17H7.5C6.94772 17 6.5 16.5523 6.5 16L6 7Z"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3>Đặt báo thức</h3>
-            </div>
+        <div className="alarmpage-modal-overlay" onClick={closeModal}>
+          <div className="alarmpage-modal" onClick={(e) => e.stopPropagation()}>
+            <h2 className="alarmpage-modal-title">Đặt báo thức</h2>
 
-            {/* 1. Time Picker (Bánh xe số) */}
-            <div className="custom-time-picker">
-              {/* Cột Giờ */}
-              <div className="picker-column" ref={hourRef}>
-                <div className="spacer" style={{ height: 65 }}></div>
-                {hours.map((h) => (
-                  <div
-                    key={h}
-                    id={`hour-${h}`}
-                    className={`picker-item ${
-                      selectedHour === h ? "selected" : ""
-                    }`}
-                    onClick={() => setSelectedHour(h)}
-                  >
-                    {h}
-                  </div>
-                ))}
-                <div className="spacer" style={{ height: 65 }}></div>
+            <div className="alarmpage-time-picker">
+              <div className="alarmpage-time-column">
+                <div className="alarmpage-time-value">
+                  {String(selectedHour - 1).padStart(2, "0")}
+                </div>
+                <div className="alarmpage-time-selected">
+                  {String(selectedHour).padStart(2, "0")}
+                </div>
+                <div className="alarmpage-time-value">
+                  {String(selectedHour + 1).padStart(2, "0")}
+                </div>
               </div>
-
-              {/* Dấu hai chấm */}
-              <div className="time-separator">:</div>
-
-              {/* Cột Phút */}
-              <div className="picker-column" ref={minuteRef}>
-                <div className="spacer" style={{ height: 65 }}></div>
-                {minutes.map((m) => (
-                  <div
-                    key={m}
-                    id={`minute-${m}`}
-                    className={`picker-item ${
-                      selectedMinute === m ? "selected" : ""
-                    }`}
-                    onClick={() => setSelectedMinute(m)}
-                  >
-                    {m}
-                  </div>
-                ))}
-                <div className="spacer" style={{ height: 65 }}></div>
+              <div className="alarmpage-time-separator">:</div>
+              <div className="alarmpage-time-column">
+                <div className="alarmpage-time-value">
+                  {String((selectedMin - 1 + 60) % 60).padStart(2, "0")}
+                </div>
+                <div className="alarmpage-time-selected">
+                  {String(selectedMin).padStart(2, "0")}
+                </div>
+                <div className="alarmpage-time-value">
+                  {String((selectedMin + 1) % 60).padStart(2, "0")}
+                </div>
               </div>
             </div>
 
-            {/* 2. Nhập tên */}
-            <div className="simple-input-group">
-              <input
-                type="text"
-                className="simple-text-input"
-                placeholder="Nhập tên (VD: Uống thuốc)..."
-                value={tempLabel}
-                onChange={(e) => setTempLabel(e.target.value)}
-              />
+            <div className="alarmpage-time-controls">
+              <div className="alarmpage-time-control-group">
+                <button
+                  onClick={() => setSelectedHour((selectedHour - 1 + 24) % 24)}
+                >
+                  ▲
+                </button>
+                <button
+                  onClick={() => setSelectedHour((selectedHour + 1) % 24)}
+                >
+                  ▼
+                </button>
+              </div>
+              <div className="alarmpage-time-control-group">
+                <button
+                  onClick={() => setSelectedMin((selectedMin - 1 + 60) % 60)}
+                >
+                  ▲
+                </button>
+                <button onClick={() => setSelectedMin((selectedMin + 1) % 60)}>
+                  ▼
+                </button>
+              </div>
             </div>
 
-            {/* 3. Chọn ngày */}
-            <div className="clean-day-selector">
-              {daysOfWeek.map((day) => (
-                <div
-                  key={day}
-                  className={`clean-day-btn ${
-                    tempDays.includes(day) ? "selected" : ""
+            <input
+              type="text"
+              className="alarmpage-name-input"
+              placeholder="Nhập tên (VD: Uống thuốc)..."
+              value={alarmName}
+              onChange={(e) => setAlarmName(e.target.value)}
+            />
+
+            <div className="alarmpage-days-selector">
+              {dayLabels.map((day, index) => (
+                <button
+                  key={index}
+                  className={`alarmpage-day-btn ${
+                    selectedDays[index] ? "alarmpage-day-active" : ""
                   }`}
-                  onClick={() => toggleDay(day)}
+                  onClick={() => toggleDay(index)}
                 >
                   {day}
-                </div>
+                </button>
               ))}
             </div>
 
-            {/* Actions */}
-            <div className="modal-actions">
-              <button
-                className="btn-cancel"
-                onClick={() => setShowModal(false)}
-              >
+            <div className="alarmpage-modal-actions">
+              <button className="alarmpage-cancel-btn" onClick={closeModal}>
                 Hủy
               </button>
-              <button className="btn-confirm" onClick={handleSaveAlarm}>
+              <button className="alarmpage-save-btn" onClick={createAlarm}>
                 Lưu thiết lập
               </button>
             </div>
           </div>
         </div>
       )}
-      <Footer />
-    </>
+    </div>
   );
 };
 

@@ -1,0 +1,512 @@
+/* AlarmPage Container */
+.alarmpage-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e8f5f0 0%, #d4e9e2 100%);
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
+}
+
+/* Header Section */
+.alarmpage-header {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alarmpage-header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.alarmpage-bell-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.alarmpage-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.alarmpage-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.alarmpage-status {
+  background: #d1fae5;
+  color: #065f46;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.alarmpage-status-count {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Create Button Section */
+.alarmpage-create-section {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 16px;
+  padding: 40px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.alarmpage-create-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  border-radius: 12px;
+  padding: 16px 32px;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+}
+
+.alarmpage-create-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.alarmpage-plus-icon {
+  font-size: 24px;
+  font-weight: 400;
+}
+
+/* Alarm List */
+.alarmpage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alarmpage-loading,
+.alarmpage-empty {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+/* Alarm Item */
+.alarmpage-item {
+  background: white;
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.alarmpage-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.alarmpage-item-icon {
+  width: 48px;
+  height: 48px;
+  background: #f3f4f6;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.alarmpage-item-content {
+  flex: 1;
+}
+
+.alarmpage-item-time {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.alarmpage-item-info {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.alarmpage-item-label {
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.alarmpage-item-repeat {
+  color: #6b7280;
+}
+
+.alarmpage-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Toggle Switch */
+.alarmpage-toggle {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.alarmpage-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.alarmpage-toggle-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e5e7eb;
+  border-radius: 28px;
+  transition: 0.3s;
+}
+
+.alarmpage-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.alarmpage-toggle input:checked + .alarmpage-toggle-slider {
+  background-color: #10b981;
+}
+
+.alarmpage-toggle input:checked + .alarmpage-toggle-slider:before {
+  transform: translateX(24px);
+}
+
+/* Delete Button */
+.alarmpage-delete-btn {
+  background: #fee2e2;
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.alarmpage-delete-btn:hover {
+  background: #fecaca;
+  transform: scale(1.1);
+}
+
+/* Modal */
+.alarmpage-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.alarmpage-modal {
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: alarmpage-modal-appear 0.3s ease;
+}
+
+@keyframes alarmpage-modal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.alarmpage-modal-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 32px 0;
+}
+
+/* Time Picker */
+.alarmpage-time-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  background: #f9fafb;
+  padding: 24px;
+  border-radius: 16px;
+}
+
+.alarmpage-time-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.alarmpage-time-value {
+  font-size: 20px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.alarmpage-time-selected {
+  font-size: 48px;
+  font-weight: 700;
+  color: #10b981;
+  background: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.alarmpage-time-separator {
+  font-size: 48px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 8px;
+}
+
+.alarmpage-time-controls {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  margin-bottom: 24px;
+}
+
+.alarmpage-time-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alarmpage-time-control-group button {
+  background: #f3f4f6;
+  border: none;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.alarmpage-time-control-group button:hover {
+  background: #e5e7eb;
+  color: #10b981;
+}
+
+/* Name Input */
+.alarmpage-name-input {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 16px;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.alarmpage-name-input:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.alarmpage-name-input::placeholder {
+  color: #9ca3af;
+}
+
+/* Days Selector */
+.alarmpage-days-selector {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.alarmpage-day-btn {
+  flex: 1;
+  padding: 12px 8px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.alarmpage-day-btn:hover {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.alarmpage-day-btn.alarmpage-day-active {
+  background: #10b981;
+  border-color: #10b981;
+  color: white;
+}
+
+/* Modal Actions */
+.alarmpage-modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.alarmpage-cancel-btn,
+.alarmpage-save-btn {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.alarmpage-cancel-btn {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.alarmpage-cancel-btn:hover {
+  background: #e5e7eb;
+}
+
+.alarmpage-save-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.alarmpage-save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .alarmpage-container {
+    padding: 12px;
+  }
+
+  .alarmpage-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .alarmpage-title {
+    font-size: 20px;
+  }
+
+  .alarmpage-create-section {
+    padding: 24px;
+  }
+
+  .alarmpage-create-btn {
+    font-size: 16px;
+    padding: 14px 24px;
+  }
+
+  .alarmpage-item {
+    padding: 16px;
+  }
+
+  .alarmpage-item-time {
+    font-size: 28px;
+  }
+
+  .alarmpage-modal {
+    padding: 24px;
+  }
+
+  .alarmpage-time-selected {
+    font-size: 40px;
+    padding: 8px 20px;
+  }
+
+  .alarmpage-time-separator {
+    font-size: 40px;
+  }
+
+  .alarmpage-days-selector {
+    gap: 6px;
+  }
+
+  .alarmpage-day-btn {
+    padding: 10px 4px;
+    font-size: 12px;
+  }
+}

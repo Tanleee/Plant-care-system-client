@@ -88,15 +88,6 @@ const TimerPage = () => {
         <div className="timer-content-wrapper">
           <div className="timer-header-section">
             <div className="timer-icon-wrapper">
-              {/* <svg
-                className="timer-icon-svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-              >
-                <circle cx="12" cy="12" r="10" strokeWidth="2" />
-                <path d="M12 6v6l4 2" strokeWidth="2" />
-              </svg> */}
               <Hourglass className="timer-icon-svg" />
             </div>
             <h1 className="timer-page-title">Hẹn Giờ</h1>

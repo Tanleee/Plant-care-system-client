@@ -108,18 +108,23 @@ const AlarmPage = () => {
         enable: true,
       };
 
-      // TODO: Thay YOUR_API_ENDPOINT bằng endpoint thực tế của bạn
-      const response = await fetch("YOUR_API_ENDPOINT/alarms", {
+      const response = await fetch("/api/v1/alarm", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newAlarmData),
+        credentials: "include", // Để gửi cookie authentication
       });
 
-      if (!response.ok) throw new Error("Failed to create alarm");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create alarm");
+      }
 
-      const createdAlarm = await response.json();
+      const responseData = await response.json();
+      const createdAlarm =
+        responseData.data?.alarm || responseData.data || responseData;
 
       // Thêm vào state local
       const formattedAlarm = {
@@ -134,24 +139,31 @@ const AlarmPage = () => {
       setShowModal(false);
     } catch (error) {
       console.error("Error creating alarm:", error);
-      alert("Không thể tạo báo thức. Vui lòng thử lại!");
+      alert(`Không thể tạo báo thức: ${error.message}`);
     }
   };
 
   // Xóa báo thức (GỌI API DELETE)
   const handleDelete = async (id) => {
+    if (!window.confirm("Bạn có chắc muốn xóa báo thức này?")) {
+      return;
+    }
+
     try {
-      // TODO: Thay YOUR_API_ENDPOINT bằng endpoint thực tế của bạn
-      const response = await fetch(`YOUR_API_ENDPOINT/alarms/${id}`, {
+      const response = await fetch(`/api/v1/alarm/${id}`, {
         method: "DELETE",
+        credentials: "include",
       });
 
-      if (!response.ok) throw new Error("Failed to delete alarm");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete alarm");
+      }
 
       setAlarms(alarms.filter((alarm) => alarm.id !== id));
     } catch (error) {
       console.error("Error deleting alarm:", error);
-      alert("Không thể xóa báo thức. Vui lòng thử lại!");
+      alert(`Không thể xóa báo thức: ${error.message}`);
     }
   };
 
@@ -165,16 +177,19 @@ const AlarmPage = () => {
         enable: !alarm.isActive,
       };
 
-      // TODO: Thay YOUR_API_ENDPOINT bằng endpoint thực tế của bạn
-      const response = await fetch(`YOUR_API_ENDPOINT/alarms/${id}`, {
+      const response = await fetch(`/api/v1/alarm/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(updatedData),
+        credentials: "include",
       });
 
-      if (!response.ok) throw new Error("Failed to update alarm");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update alarm");
+      }
 
       setAlarms(
         alarms.map((alarm) =>
@@ -183,7 +198,7 @@ const AlarmPage = () => {
       );
     } catch (error) {
       console.error("Error updating alarm:", error);
-      alert("Không thể cập nhật báo thức. Vui lòng thử lại!");
+      alert(`Không thể cập nhật báo thức: ${error.message}`);
     }
   };
 

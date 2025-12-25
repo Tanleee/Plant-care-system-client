@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Timer } from "lucide-react";
 import "./../assets/stopwatchStyles.css";
 
 import NavBar from "../components/shared/NavBar";
@@ -62,15 +63,7 @@ const StopwatchPage = () => {
         <div className="stopwatch-content-wrapper">
           <div className="stopwatch-header-section">
             <div className="stopwatch-icon-wrapper">
-              <svg
-                className="stopwatch-icon-svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-              >
-                <circle cx="12" cy="12" r="10" strokeWidth="2" />
-                <polyline points="12 6 12 12 16 14" strokeWidth="2" />
-              </svg>
+              <Timer className="stopwatch-icon-svg" />
             </div>
             <h1 className="stopwatch-page-title">Bấm Giờ</h1>
           </div>

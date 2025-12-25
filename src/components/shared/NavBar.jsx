@@ -263,7 +263,7 @@ function AuthButtons({ isMobile }) {
 
 // Main NavBar Component
 const NavBar = ({ onLogout = null }) => {
-  const user = useRouteLoaderData("root").user;
+  const user = useRouteLoaderData("root");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {

@@ -10,6 +10,9 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import NavBar from "../components/shared/NavBar";
+import Footer from "../components/shared/Footer";
+
 const HomePage = () => {
   // Clock styles: digital, analog, minimal, flip
   const [clockStyle, setClockStyle] = useState("digital");
@@ -346,267 +349,271 @@ const HomePage = () => {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background:
-          "linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%)",
-        padding: "2rem",
-        fontFamily: "'Inter', sans-serif",
-      }}
-    >
-      {/* Header */}
-      <header
+    <>
+      <NavBar />
+      <div
         style={{
-          maxWidth: "1400px",
-          margin: "0 auto 2.5rem",
-          background: "white",
-          borderRadius: "20px",
+          minHeight: "100vh",
+          background:
+            "linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%)",
           padding: "2rem",
-          boxShadow: "0 4px 20px rgba(5, 150, 105, 0.1)",
+          fontFamily: "'Inter', sans-serif",
         }}
       >
-        <div
+        {/* Header */}
+        <header
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: "1.5rem",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <div
-              style={{
-                background: "linear-gradient(135deg, #059669, #047857)",
-                padding: "0.875rem",
-                borderRadius: "16px",
-                display: "flex",
-                boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)",
-              }}
-            >
-              <Clock size={32} color="white" />
-            </div>
-            <div>
-              <h1
-                style={{
-                  color: "#047857",
-                  fontSize: "2rem",
-                  fontWeight: "700",
-                  marginBottom: "0.25rem",
-                }}
-              >
-                Smart Desk Controller
-              </h1>
-              <p style={{ color: "#6b7280", fontSize: "0.875rem" }}>
-                Hệ thống quản lý thời gian thông minh
-              </p>
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              padding: "0.875rem 1.5rem",
-              background: "linear-gradient(135deg, #ecfdf5, #d1fae5)",
-              borderRadius: "50px",
-              border: "2px solid #10b981",
-            }}
-          >
-            <div
-              style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                background: "#10b981",
-                boxShadow: "0 0 10px #10b981",
-                animation: "pulse 2s infinite",
-              }}
-            />
-            <Wifi size={18} />
-            <span
-              style={{
-                color: "#047857",
-                fontWeight: "600",
-                fontSize: "0.875rem",
-              }}
-            >
-              Đã kết nối
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Clock Card */}
-      <div style={{ maxWidth: "1400px", margin: "0 auto 2rem" }}>
-        <div
-          style={{
+            maxWidth: "1400px",
+            margin: "0 auto 2.5rem",
             background: "white",
             borderRadius: "20px",
-            padding: "3rem 2rem",
+            padding: "2rem",
             boxShadow: "0 4px 20px rgba(5, 150, 105, 0.1)",
-            position: "relative",
-            overflow: "hidden",
-            minHeight: "500px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
           }}
         >
-          {showChristmas && <ChristmasDecorations />}
-
-          {/* Clock Style Selector */}
           <div
             style={{
               display: "flex",
-              gap: "10px",
-              marginBottom: "30px",
-              zIndex: 10,
-              position: "relative",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "1.5rem",
             }}
           >
-            {[
-              { id: "digital", icon: <Timer size={20} />, label: "Số" },
-              { id: "analog", icon: <Clock size={20} />, label: "Kim" },
-              { id: "flip", icon: <Sparkles size={20} />, label: "Lật" },
-              { id: "minimal", icon: <Moon size={20} />, label: "Tối giản" },
-            ].map((style) => (
-              <button
-                key={style.id}
-                onClick={() => setClockStyle(style.id)}
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <div
                 style={{
-                  padding: "12px 20px",
-                  borderRadius: "12px",
-                  border:
-                    clockStyle === style.id
-                      ? "2px solid #10b981"
-                      : "2px solid #e5e7eb",
-                  background: clockStyle === style.id ? "#ecfdf5" : "white",
-                  color: clockStyle === style.id ? "#047857" : "#6b7280",
-                  fontWeight: "600",
-                  cursor: "pointer",
+                  background: "linear-gradient(135deg, #059669, #047857)",
+                  padding: "0.875rem",
+                  borderRadius: "16px",
                   display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  transition: "all 0.2s",
+                  boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)",
+                }}
+              >
+                <Clock size={32} color="white" />
+              </div>
+              <div>
+                <h1
+                  style={{
+                    color: "#047857",
+                    fontSize: "2rem",
+                    fontWeight: "700",
+                    marginBottom: "0.25rem",
+                  }}
+                >
+                  Smart Desk Controller
+                </h1>
+                <p style={{ color: "#6b7280", fontSize: "0.875rem" }}>
+                  Hệ thống quản lý thời gian thông minh
+                </p>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.75rem",
+                padding: "0.875rem 1.5rem",
+                background: "linear-gradient(135deg, #ecfdf5, #d1fae5)",
+                borderRadius: "50px",
+                border: "2px solid #10b981",
+              }}
+            >
+              <div
+                style={{
+                  width: "10px",
+                  height: "10px",
+                  borderRadius: "50%",
+                  background: "#10b981",
+                  boxShadow: "0 0 10px #10b981",
+                  animation: "pulse 2s infinite",
+                }}
+              />
+              <Wifi size={18} />
+              <span
+                style={{
+                  color: "#047857",
+                  fontWeight: "600",
                   fontSize: "0.875rem",
                 }}
               >
-                {style.icon}
-                {style.label}
-              </button>
-            ))}
+                Đã kết nối
+              </span>
+            </div>
           </div>
+        </header>
 
-          {/* Christmas Toggle */}
-          <button
-            onClick={() => setShowChristmas(!showChristmas)}
-            style={{
-              position: "absolute",
-              top: "20px",
-              right: "20px",
-              padding: "10px 20px",
-              borderRadius: "50px",
-              border: "2px solid #ef4444",
-              background: showChristmas ? "#fee2e2" : "white",
-              color: "#dc2626",
-              fontWeight: "600",
-              cursor: "pointer",
-              fontSize: "0.875rem",
-              zIndex: 10,
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            {showChristmas ? "🎄 Tắt Giáng Sinh" : "🎅 Bật Giáng Sinh"}
-          </button>
-
-          {/* City Label */}
+        {/* Main Clock Card */}
+        <div style={{ maxWidth: "1400px", margin: "0 auto 2rem" }}>
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              marginBottom: "10px",
-              zIndex: 10,
+              background: "white",
+              borderRadius: "20px",
+              padding: "3rem 2rem",
+              boxShadow: "0 4px 20px rgba(5, 150, 105, 0.1)",
               position: "relative",
+              overflow: "hidden",
+              minHeight: "500px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <Clock size={24} color="#10b981" />
-            <span
+            {showChristmas && <ChristmasDecorations />}
+
+            {/* Clock Style Selector */}
+            <div
               style={{
-                fontSize: "1.1rem",
-                fontWeight: "600",
-                color: "#64748b",
-                textTransform: "uppercase",
-                letterSpacing: "1px",
+                display: "flex",
+                gap: "10px",
+                marginBottom: "30px",
+                zIndex: 10,
+                position: "relative",
               }}
             >
-              Thời gian tại {clockData.city}
-            </span>
-          </div>
+              {[
+                { id: "digital", icon: <Timer size={20} />, label: "Số" },
+                { id: "analog", icon: <Clock size={20} />, label: "Kim" },
+                { id: "flip", icon: <Sparkles size={20} />, label: "Lật" },
+                { id: "minimal", icon: <Moon size={20} />, label: "Tối giản" },
+              ].map((style) => (
+                <button
+                  key={style.id}
+                  onClick={() => setClockStyle(style.id)}
+                  style={{
+                    padding: "12px 20px",
+                    borderRadius: "12px",
+                    border:
+                      clockStyle === style.id
+                        ? "2px solid #10b981"
+                        : "2px solid #e5e7eb",
+                    background: clockStyle === style.id ? "#ecfdf5" : "white",
+                    color: clockStyle === style.id ? "#047857" : "#6b7280",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    transition: "all 0.2s",
+                    fontSize: "0.875rem",
+                  }}
+                >
+                  {style.icon}
+                  {style.label}
+                </button>
+              ))}
+            </div>
 
-          {/* Clock Display */}
-          <div
-            style={{
-              margin: "20px 0",
-              zIndex: 10,
-              position: "relative",
-            }}
-          >
-            {renderClock()}
-          </div>
+            {/* Christmas Toggle */}
+            <button
+              onClick={() => setShowChristmas(!showChristmas)}
+              style={{
+                position: "absolute",
+                top: "20px",
+                right: "20px",
+                padding: "10px 20px",
+                borderRadius: "50px",
+                border: "2px solid #ef4444",
+                background: showChristmas ? "#fee2e2" : "white",
+                color: "#dc2626",
+                fontWeight: "600",
+                cursor: "pointer",
+                fontSize: "0.875rem",
+                zIndex: 10,
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
+              {showChristmas ? "🎄 Tắt Giáng Sinh" : "🎅 Bật Giáng Sinh"}
+            </button>
 
-          {/* Date Display */}
-          <div
-            style={{
-              fontSize: "1.5rem",
-              color: "#64748b",
-              fontWeight: "500",
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              background: "#f1f5f9",
-              padding: "8px 24px",
-              borderRadius: "50px",
-              zIndex: 10,
-              position: "relative",
-            }}
-          >
-            <Calendar size={24} color="#64748b" />
-            {clockData.dateStr}
+            {/* City Label */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginBottom: "10px",
+                zIndex: 10,
+                position: "relative",
+              }}
+            >
+              <Clock size={24} color="#10b981" />
+              <span
+                style={{
+                  fontSize: "1.1rem",
+                  fontWeight: "600",
+                  color: "#64748b",
+                  textTransform: "uppercase",
+                  letterSpacing: "1px",
+                }}
+              >
+                Thời gian tại {clockData.city}
+              </span>
+            </div>
+
+            {/* Clock Display */}
+            <div
+              style={{
+                margin: "20px 0",
+                zIndex: 10,
+                position: "relative",
+              }}
+            >
+              {renderClock()}
+            </div>
+
+            {/* Date Display */}
+            <div
+              style={{
+                fontSize: "1.5rem",
+                color: "#64748b",
+                fontWeight: "500",
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                background: "#f1f5f9",
+                padding: "8px 24px",
+                borderRadius: "50px",
+                zIndex: 10,
+                position: "relative",
+              }}
+            >
+              <Calendar size={24} color="#64748b" />
+              {clockData.dateStr}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Footer */}
-      <footer
-        style={{
-          maxWidth: "1400px",
-          margin: "0 auto",
-          textAlign: "center",
-          padding: "1.5rem",
-          color: "#6b7280",
-          fontSize: "0.875rem",
-          background: "white",
-          borderRadius: "16px",
-          boxShadow: "0 2px 10px rgba(5, 150, 105, 0.08)",
-        }}
-      >
-        <p>Smart Desk System v2.0 • Designed by 113 team</p>
-      </footer>
+        {/* Footer */}
+        <footer
+          style={{
+            maxWidth: "1400px",
+            margin: "0 auto",
+            textAlign: "center",
+            padding: "1.5rem",
+            color: "#6b7280",
+            fontSize: "0.875rem",
+            background: "white",
+            borderRadius: "16px",
+            boxShadow: "0 2px 10px rgba(5, 150, 105, 0.08)",
+          }}
+        >
+          <p>Smart Desk System v2.0 • Designed by 113 team</p>
+        </footer>
 
-      <style>{`
+        <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.7; transform: scale(0.95); }
         }
       `}</style>
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 

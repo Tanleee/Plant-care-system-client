@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useRevalidator } from "react-router";
 import getApiUrl from "../utils/getApiUrl";
 import "./../assets/alarmPageStyle.css";
 
 const AlarmPage = () => {
+  const revalidator = useRevalidator();
+
   const [alarms, setAlarms] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedHour, setSelectedHour] = useState(22);
@@ -35,6 +38,7 @@ const AlarmPage = () => {
       const data = await response.json();
       if (data.status === "success") {
         setAlarms(data.data.data);
+        revalidator.revalidate();
       }
     } catch (error) {
       console.error("Error fetching alarms:", error);
@@ -62,6 +66,7 @@ const AlarmPage = () => {
       if (data.status === "success") {
         setAlarms([...alarms, data.data.data]);
         closeModal();
+        revalidator.revalidate();
       }
     } catch (error) {
       console.error("Error creating alarm:", error);
@@ -87,6 +92,7 @@ const AlarmPage = () => {
             alarm._id === id ? { ...alarm, enable: !currentState } : alarm
           )
         );
+        revalidator.revalidate();
       }
     } catch (error) {
       console.error("Error updating alarm:", error);
@@ -100,6 +106,7 @@ const AlarmPage = () => {
         credentials: "include",
       });
       setAlarms(alarms.filter((alarm) => alarm._id !== id));
+      revalidator.revalidate();
     } catch (error) {
       console.error("Error deleting alarm:", error);
     }
@@ -183,9 +190,6 @@ const AlarmPage = () => {
     if (count === 7) return "Hằng ngày";
     return "Tùy chỉnh";
   };
-
-  const hours = Array.from({ length: 24 }, (_, i) => i);
-  const minutes = Array.from({ length: 60 }, (_, i) => i);
 
   return (
     <div className="alarmpage-container">

@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useRevalidator } from "react-router";
+import NavBar from "../components/shared/NavBar";
+import Footer from "../components/shared/Footer";
 import getApiUrl from "../utils/getApiUrl";
 import "./../assets/alarmPageStyle.css";
+
+function countEnabelAlarm(alarms) {
+  let count = 0;
+  for (let i = 0; i < alarms.length; i++) {
+    count += alarms[i].enable;
+  }
+  return count;
+}
 
 const AlarmPage = () => {
   const revalidator = useRevalidator();
@@ -192,177 +202,186 @@ const AlarmPage = () => {
   };
 
   return (
-    <div className="alarmpage-container">
-      <div className="alarmpage-header">
-        <div className="alarmpage-header-content">
-          <div className="alarmpage-bell-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.37 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.64 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z"
-                fill="currentColor"
-              />
-            </svg>
+    <>
+      <NavBar />
+      <div className="alarmpage-container">
+        <div className="alarmpage-header">
+          <div className="alarmpage-header-content">
+            <div className="alarmpage-bell-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.37 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.64 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+            <div>
+              <h1 className="alarmpage-title">Quản lý Báo thức</h1>
+              <p className="alarmpage-subtitle">Đồng bộ với Smart Desk Clock</p>
+            </div>
           </div>
-          <div>
-            <h1 className="alarmpage-title">Quản lý Báo thức</h1>
-            <p className="alarmpage-subtitle">Đồng bộ với Smart Desk Clock</p>
+          <div className="alarmpage-status">
+            <span className="alarmpage-status-count">
+              {countEnabelAlarm(alarms)}
+            </span>{" "}
+            đang bật
           </div>
         </div>
-        <div className="alarmpage-status">
-          <span className="alarmpage-status-count">{alarms.length}</span> đang
-          bật
+
+        <div className="alarmpage-create-section">
+          <button className="alarmpage-create-btn" onClick={openModal}>
+            <span className="alarmpage-plus-icon">+</span>
+            Thiết lập báo thức mới
+          </button>
         </div>
-      </div>
 
-      <div className="alarmpage-create-section">
-        <button className="alarmpage-create-btn" onClick={openModal}>
-          <span className="alarmpage-plus-icon">+</span>
-          Thiết lập báo thức mới
-        </button>
-      </div>
-
-      <div className="alarmpage-list">
-        {loading ? (
-          <div className="alarmpage-loading">Đang tải...</div>
-        ) : alarms.length === 0 ? (
-          <div className="alarmpage-empty">Chưa có báo thức nào</div>
-        ) : (
-          alarms.map((alarm) => (
-            <div key={alarm._id} className="alarmpage-item">
-              <div className="alarmpage-item-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                  <path
-                    d="M12 6V12L16 14"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </div>
-              <div className="alarmpage-item-content">
-                <div className="alarmpage-item-time">
-                  {String(alarm.hour).padStart(2, "0")}:
-                  {String(alarm.min).padStart(2, "0")}
-                </div>
-                <div className="alarmpage-item-info">
-                  <span className="alarmpage-item-label">Báo thức</span>
-                  <span className="alarmpage-item-repeat">
-                    {getRepeatText(alarm.repeat)}
-                  </span>
-                </div>
-              </div>
-              <div className="alarmpage-item-actions">
-                <label className="alarmpage-toggle">
-                  <input
-                    type="checkbox"
-                    checked={alarm.enable}
-                    onChange={() => toggleAlarm(alarm._id, alarm.enable)}
-                  />
-                  <span className="alarmpage-toggle-slider"></span>
-                </label>
-                <button
-                  className="alarmpage-delete-btn"
-                  onClick={() => deleteAlarm(alarm._id)}
-                >
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path
-                      d="M5 7H15M8 10V14M12 10V14M13 7V5C13 4.44772 12.5523 4 12 4H8C7.44772 4 7 4.44772 7 5V7M6 7H14L13.5 16C13.5 16.5523 13.0523 17 12.5 17H7.5C6.94772 17 6.5 16.5523 6.5 16L6 7Z"
+        <div className="alarmpage-list">
+          {loading ? (
+            <div className="alarmpage-loading">Đang tải...</div>
+          ) : alarms.length === 0 ? (
+            <div className="alarmpage-empty">Chưa có báo thức nào</div>
+          ) : (
+            alarms.map((alarm) => (
+              <div key={alarm._id} className="alarmpage-item">
+                <div className="alarmpage-item-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="9"
                       stroke="currentColor"
-                      strokeWidth="1.5"
+                      strokeWidth="2"
+                    />
+                    <path
+                      d="M12 6V12L16 14"
+                      stroke="currentColor"
+                      strokeWidth="2"
                       strokeLinecap="round"
                     />
                   </svg>
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {showModal && (
-        <div className="alarmpage-modal-overlay" onClick={closeModal}>
-          <div className="alarmpage-modal" onClick={(e) => e.stopPropagation()}>
-            <h2 className="alarmpage-modal-title">Đặt báo thức</h2>
-
-            <div className="alarmpage-time-picker">
-              <div
-                className="alarmpage-time-column"
-                onWheel={handleHourScroll}
-                onTouchStart={handleHourTouch}
-                onTouchMove={handleHourTouch}
-                onTouchEnd={handleHourTouch}
-              >
-                <div className="alarmpage-time-value">
-                  {String((selectedHour - 1 + 24) % 24).padStart(2, "0")}
                 </div>
-                <div className="alarmpage-time-selected">
-                  {String(selectedHour).padStart(2, "0")}
+                <div className="alarmpage-item-content">
+                  <div className="alarmpage-item-time">
+                    {String(alarm.hour).padStart(2, "0")}:
+                    {String(alarm.min).padStart(2, "0")}
+                  </div>
+                  <div className="alarmpage-item-info">
+                    <span className="alarmpage-item-label">Báo thức</span>
+                    <span className="alarmpage-item-repeat">
+                      {getRepeatText(alarm.repeat)}
+                    </span>
+                  </div>
                 </div>
-                <div className="alarmpage-time-value">
-                  {String((selectedHour + 1) % 24).padStart(2, "0")}
-                </div>
-              </div>
-              <div className="alarmpage-time-separator">:</div>
-              <div
-                className="alarmpage-time-column"
-                onWheel={handleMinScroll}
-                onTouchStart={handleMinTouch}
-                onTouchMove={handleMinTouch}
-                onTouchEnd={handleMinTouch}
-              >
-                <div className="alarmpage-time-value">
-                  {String((selectedMin - 1 + 60) % 60).padStart(2, "0")}
-                </div>
-                <div className="alarmpage-time-selected">
-                  {String(selectedMin).padStart(2, "0")}
-                </div>
-                <div className="alarmpage-time-value">
-                  {String((selectedMin + 1) % 60).padStart(2, "0")}
+                <div className="alarmpage-item-actions">
+                  <label className="alarmpage-toggle">
+                    <input
+                      type="checkbox"
+                      checked={alarm.enable}
+                      onChange={() => toggleAlarm(alarm._id, alarm.enable)}
+                    />
+                    <span className="alarmpage-toggle-slider"></span>
+                  </label>
+                  <button
+                    className="alarmpage-delete-btn"
+                    onClick={() => deleteAlarm(alarm._id)}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path
+                        d="M5 7H15M8 10V14M12 10V14M13 7V5C13 4.44772 12.5523 4 12 4H8C7.44772 4 7 4.44772 7 5V7M6 7H14L13.5 16C13.5 16.5523 13.0523 17 12.5 17H7.5C6.94772 17 6.5 16.5523 6.5 16L6 7Z"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </button>
                 </div>
               </div>
-            </div>
+            ))
+          )}
+        </div>
 
-            <input
-              type="text"
-              className="alarmpage-name-input"
-              placeholder="Nhập tên (VD: Uống thuốc)..."
-              value={alarmName}
-              onChange={(e) => setAlarmName(e.target.value)}
-            />
+        {showModal && (
+          <div className="alarmpage-modal-overlay" onClick={closeModal}>
+            <div
+              className="alarmpage-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="alarmpage-modal-title">Đặt báo thức</h2>
 
-            <div className="alarmpage-days-selector">
-              {dayLabels.map((day, index) => (
-                <button
-                  key={index}
-                  className={`alarmpage-day-btn ${
-                    selectedDays[index] ? "alarmpage-day-active" : ""
-                  }`}
-                  onClick={() => toggleDay(index)}
+              <div className="alarmpage-time-picker">
+                <div
+                  className="alarmpage-time-column"
+                  onWheel={handleHourScroll}
+                  onTouchStart={handleHourTouch}
+                  onTouchMove={handleHourTouch}
+                  onTouchEnd={handleHourTouch}
                 >
-                  {day}
-                </button>
-              ))}
-            </div>
+                  <div className="alarmpage-time-value">
+                    {String((selectedHour - 1 + 24) % 24).padStart(2, "0")}
+                  </div>
+                  <div className="alarmpage-time-selected">
+                    {String(selectedHour).padStart(2, "0")}
+                  </div>
+                  <div className="alarmpage-time-value">
+                    {String((selectedHour + 1) % 24).padStart(2, "0")}
+                  </div>
+                </div>
+                <div className="alarmpage-time-separator">:</div>
+                <div
+                  className="alarmpage-time-column"
+                  onWheel={handleMinScroll}
+                  onTouchStart={handleMinTouch}
+                  onTouchMove={handleMinTouch}
+                  onTouchEnd={handleMinTouch}
+                >
+                  <div className="alarmpage-time-value">
+                    {String((selectedMin - 1 + 60) % 60).padStart(2, "0")}
+                  </div>
+                  <div className="alarmpage-time-selected">
+                    {String(selectedMin).padStart(2, "0")}
+                  </div>
+                  <div className="alarmpage-time-value">
+                    {String((selectedMin + 1) % 60).padStart(2, "0")}
+                  </div>
+                </div>
+              </div>
 
-            <div className="alarmpage-modal-actions">
-              <button className="alarmpage-cancel-btn" onClick={closeModal}>
-                Hủy
-              </button>
-              <button className="alarmpage-save-btn" onClick={createAlarm}>
-                Lưu thiết lập
-              </button>
+              <input
+                type="text"
+                className="alarmpage-name-input"
+                placeholder="Nhập tên (VD: Uống thuốc)..."
+                value={alarmName}
+                onChange={(e) => setAlarmName(e.target.value)}
+              />
+
+              <div className="alarmpage-days-selector">
+                {dayLabels.map((day, index) => (
+                  <button
+                    key={index}
+                    className={`alarmpage-day-btn ${
+                      selectedDays[index] ? "alarmpage-day-active" : ""
+                    }`}
+                    onClick={() => toggleDay(index)}
+                  >
+                    {day}
+                  </button>
+                ))}
+              </div>
+
+              <div className="alarmpage-modal-actions">
+                <button className="alarmpage-cancel-btn" onClick={closeModal}>
+                  Hủy
+                </button>
+                <button className="alarmpage-save-btn" onClick={createAlarm}>
+                  Lưu thiết lập
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+      <Footer />
+    </>
   );
 };
 
